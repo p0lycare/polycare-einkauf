@@ -1,0 +1,140 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { ladeIch } from "@/lib/einkauf/ich";
+import { formatNr } from "@/lib/einkauf/anforderung";
+import { formatDatum, formatEuro } from "@/lib/format";
+import { knopfSekundaer } from "@/lib/stil";
+import { anforderungLoeschen } from "../actions";
+import { AusserplanBadge, StatusBadge } from "../status-badge";
+import { Verlauf } from "./workflow/verlauf";
+import { WorkflowPanel, type WorkflowRechte } from "./workflow/workflow-panel";
+
+function Zeile({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[9rem_1fr] gap-2 py-1.5 text-sm">
+      <dt className="text-neutral-500">{label}</dt>
+      <dd className="min-w-0 break-words">{children}</dd>
+    </div>
+  );
+}
+
+export default async function AnforderungSeite({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const [ich, { data: a }] = await Promise.all([
+    ladeIch(supabase),
+    supabase
+      .from("anforderung")
+      .select(
+        `*, darf_freigeben,
+         team(name), periode(name),
+         budgetposten(name), key_result(kuerzel, titel),
+         ersteller:profile!anforderung_ersteller_id_fkey(name),
+         tl:profile!anforderung_teamleitung_von_fkey(name),
+         gf:profile!anforderung_gf_von_fkey(name),
+         einkauf:profile!anforderung_bestellt_von_fkey(name)`,
+      )
+      .eq("id", id)
+      .maybeSingle(),
+  ]);
+  if (!a || !ich) notFound();
+
+  const eigene = a.ersteller_id === ich.id;
+  const bearbeitbar = eigene && (a.status === "entwurf" || a.status === "abgelehnt");
+  const rechte: WorkflowRechte = {
+    einreichen: bearbeitbar,
+    zurueckziehen: eigene && (a.status === "bei_teamleitung" || a.status === "bei_gf"),
+    freigeben: !!a.darf_freigeben,
+    bestellen: ich.ist_einkauf && a.status === "freigegeben",
+  };
+  const panelTitel = rechte.freigeben
+    ? a.status === "bei_gf"
+      ? "Freigabe Geschäftsführung"
+      : "Freigabe Teamleitung"
+    : rechte.bestellen
+      ? "Bestellung"
+      : "Nächster Schritt";
+
+  return (
+    <main className="mx-auto flex max-w-2xl flex-col gap-6 p-6 font-sans">
+      <div>
+        <Link href="/" className="text-sm text-neutral-500 hover:underline">
+          ← Meine Anforderungen
+        </Link>
+        <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm text-neutral-500">{formatNr(a.nr)}</p>
+            <h1 className="text-xl font-semibold">{a.titel}</h1>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xl font-semibold tabular-nums">{formatEuro(a.betrag_cent)}</span>
+            <div className="flex gap-1">
+              {a.ausserplanmaessig && <AusserplanBadge />}
+              <StatusBadge status={a.status} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {a.status === "abgelehnt" && a.ablehnungsgrund && (
+        <p className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">
+          Abgelehnt: {a.ablehnungsgrund}
+          {eigene && " – du kannst die Anforderung bearbeiten und erneut einreichen."}
+        </p>
+      )}
+
+      <WorkflowPanel id={a.id} rechte={rechte} titel={panelTitel} />
+
+      <dl className="divide-y divide-neutral-100 dark:divide-neutral-900">
+        <Zeile label="Angefordert von">{a.ersteller?.name}</Zeile>
+        <Zeile label="Team">{a.team?.name}</Zeile>
+        <Zeile label="Periode">{a.periode?.name}</Zeile>
+        <Zeile label="Budgetposten">{a.budgetposten?.name ?? "– außerplanmäßig –"}</Zeile>
+        {a.key_result && (
+          <Zeile label="Key Result">
+            {a.key_result.kuerzel} – {a.key_result.titel}
+          </Zeile>
+        )}
+        {a.lieferant && <Zeile label="Lieferant">{a.lieferant}</Zeile>}
+        {a.link && (
+          <Zeile label="Link">
+            <a href={a.link} target="_blank" rel="noreferrer" className="underline">
+              {a.link}
+            </a>
+          </Zeile>
+        )}
+        {a.gewuenscht_bis && <Zeile label="Gewünscht bis">{formatDatum(a.gewuenscht_bis)}</Zeile>}
+        {a.beschreibung && <Zeile label="Beschreibung"><span className="whitespace-pre-line">{a.beschreibung}</span></Zeile>}
+        {a.begruendung && <Zeile label="Begründung"><span className="whitespace-pre-line">{a.begruendung}</span></Zeile>}
+        {a.tl && <Zeile label="Teamleitung">{a.tl.name}</Zeile>}
+        {a.gf && <Zeile label="Geschäftsführung">{a.gf.name}</Zeile>}
+        {a.einkauf && (
+          <Zeile label="Bestellt">
+            {a.einkauf.name}
+            {a.bestellt_am && `, ${formatDatum(a.bestellt_am)}`}
+            {a.bestellnummer && ` · ${a.bestellnummer}`}
+          </Zeile>
+        )}
+      </dl>
+
+      {bearbeitbar && (
+        <div className="flex gap-3">
+          <Link href={`/anforderungen/${a.id}/bearbeiten`} className={knopfSekundaer}>
+            Bearbeiten
+          </Link>
+          {a.status === "entwurf" && (
+            <form action={anforderungLoeschen}>
+              <input type="hidden" name="id" value={a.id} />
+              <button type="submit" className="px-2 py-2 text-sm text-red-700 hover:underline dark:text-red-400">
+                Löschen
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+
+      <Verlauf anforderungId={a.id} />
+    </main>
+  );
+}
