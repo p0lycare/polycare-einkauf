@@ -10,8 +10,8 @@ Konzept und Ausbaustufen: [docs/konzept.md](docs/konzept.md)
 ## Stack
 
 - **Next.js 15** (App Router, TypeScript, Tailwind)
-- **Supabase** – Postgres, Login mit Microsoft, Row Level Security
-- **Vercel** – Hosting, Preview je Pull Request
+- **Supabase** – Postgres, Login mit Microsoft, Row Level Security; Region Frankfurt (eu-central-1)
+- **Vercel** – Hosting, Preview je Pull Request; Serverfunktionen in Frankfurt (`vercel.json`)
 
 Gleicher Stack wie die Reisekosten-App, aber eigene Datenbank. Gemeinsam ist nur die Anmeldung mit
 dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
