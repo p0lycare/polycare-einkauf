@@ -31,10 +31,11 @@ function Balken({ z }: { z: Zeile }) {
   );
 }
 
-function Betrag({ cent, negativWarnung }: { cent: number; negativWarnung?: boolean }) {
+/** `breit`: Spalte erst ab Tablet-Breite zeigen */
+function Betrag({ cent, negativWarnung, breit }: { cent: number; negativWarnung?: boolean; breit?: boolean }) {
   const warnung = negativWarnung && cent < 0;
   return (
-    <td className={`px-2 py-2 text-right tabular-nums ${warnung ? "font-medium text-red-700 dark:text-red-400" : ""}`}>
+    <td className={`px-2 py-2 text-right tabular-nums ${breit ? "hidden sm:table-cell" : ""} ${warnung ? "font-medium text-red-700 dark:text-red-400" : ""}`}>
       {formatEuro(cent)}
     </td>
   );
@@ -91,13 +92,13 @@ export default async function Budget({ searchParams }: { searchParams: Promise<{
         return (
           <section key={team.id} className="overflow-x-auto">
             <h2 className="mb-2 font-medium">{team.name}</h2>
-            <table className="w-full min-w-[40rem] text-sm">
+            <table className="w-full text-sm sm:min-w-[40rem]">
               <thead className="text-left text-xs text-neutral-500">
                 <tr className="border-b border-neutral-200 dark:border-neutral-800">
                   <th className="py-2 pr-2 font-normal">Budgetposten</th>
-                  <th className="w-40 px-2 font-normal" />
+                  <th className="hidden w-40 px-2 font-normal sm:table-cell" />
                   <th className="px-2 text-right font-normal">Geplant</th>
-                  <th className="px-2 text-right font-normal">In Freigabe</th>
+                  <th className="hidden px-2 text-right font-normal sm:table-cell">In Freigabe</th>
                   <th className="px-2 text-right font-normal">Gebunden</th>
                   <th className="px-2 text-right font-normal">Verfügbar</th>
                 </tr>
@@ -111,9 +112,9 @@ export default async function Budget({ searchParams }: { searchParams: Promise<{
                         <span className="ml-2 rounded bg-neutral-100 px-1.5 py-0.5 text-xs dark:bg-neutral-800">{kr.get(z.key_result_id)}</span>
                       )}
                     </td>
-                    <td className="px-2">{z.budgetposten_id && <Balken z={z} />}</td>
+                    <td className="hidden px-2 sm:table-cell">{z.budgetposten_id && <Balken z={z} />}</td>
                     <Betrag cent={z.geplant_cent} />
-                    <Betrag cent={z.in_freigabe_cent} />
+                    <Betrag cent={z.in_freigabe_cent} breit />
                     <Betrag cent={z.gebunden_cent} />
                     <Betrag cent={z.verfuegbar_cent} negativWarnung />
                   </tr>
@@ -122,9 +123,9 @@ export default async function Budget({ searchParams }: { searchParams: Promise<{
               <tfoot className="border-t border-neutral-300 font-medium dark:border-neutral-700">
                 <tr>
                   <td className="py-2 pr-2">Summe</td>
-                  <td />
+                  <td className="hidden sm:table-cell" />
                   <Betrag cent={summe("geplant_cent")} />
-                  <Betrag cent={summe("in_freigabe_cent")} />
+                  <Betrag cent={summe("in_freigabe_cent")} breit />
                   <Betrag cent={summe("gebunden_cent")} />
                   <Betrag cent={summe("verfuegbar_cent")} negativWarnung />
                 </tr>
