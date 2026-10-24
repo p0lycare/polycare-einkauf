@@ -6,6 +6,7 @@ export type KopfzeileDaten = {
   name: string;
   freigaben: number | null;
   bestellen: number | null;
+  zeigeUebersicht: boolean;
   zeigePlanung: boolean;
   zeigeVerwaltung: boolean;
 };
@@ -16,6 +17,7 @@ export function Kopfzeile({ daten }: { daten: KopfzeileDaten }) {
     { href: "/", text: "Meine Anforderungen", aktivBei: "/" },
     ...(daten.freigaben !== null ? [{ href: "/freigaben", text: "Freigaben", aktivBei: "/freigaben", zaehler: daten.freigaben }] : []),
     ...(daten.bestellen !== null ? [{ href: "/einkauf", text: "Einkauf", aktivBei: "/einkauf", zaehler: daten.bestellen }] : []),
+    ...(daten.zeigeUebersicht ? [{ href: "/uebersicht", text: "Übersicht", aktivBei: "/uebersicht" }] : []),
     { href: "/budget", text: "Budget", aktivBei: "/budget" },
     ...(daten.zeigePlanung ? [{ href: "/planung", text: "Planung", aktivBei: "/planung" }] : []),
     ...(daten.zeigeVerwaltung ? [{ href: "/verwaltung", text: "Verwaltung", aktivBei: "/verwaltung" }] : []),
