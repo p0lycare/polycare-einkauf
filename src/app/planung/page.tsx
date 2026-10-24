@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ladeIch, plant } from "@/lib/einkauf/ich";
 import { formatDatum, formatEuro } from "@/lib/format";
 import { karte } from "@/lib/stil";
-import { KeyResultZeile, PeriodeZeile, PostenZeile } from "./formulare";
+import { KeyResultZeile, PeriodeKopieren, PeriodeZeile, PostenZeile } from "./formulare";
 
 export default async function Planung({ searchParams }: { searchParams: Promise<{ periode?: string }> }) {
   const { periode: gewuenscht } = await searchParams;
@@ -35,6 +35,9 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
     (t) => finanzen || (ich.leitet.includes(t.id) && periode?.status === "planung"),
   );
   const sichtbareTeams = (teams ?? []).filter((t) => finanzen || ich.leitet.includes(t.id));
+  // Vorlagen für eine Periode in Planung: alle früheren Perioden, die jüngste zuerst
+  const vorperioden =
+    finanzen && periode?.status === "planung" ? (perioden ?? []).filter((p) => p.beginn < periode.beginn) : [];
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 p-6 font-sans">
@@ -77,6 +80,17 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
                 </Link>
               ))}
             </nav>
+          )}
+
+          {vorperioden.length > 0 && (
+            <section className={karte}>
+              <h2 className="font-medium">Vorperiode kopieren</h2>
+              <p className="mt-1 text-sm text-neutral-500">
+                Übernimmt Key Results und Budgetposten mit ihren Beträgen als Vorlage. Schon vorhandene Einträge bleiben
+                unverändert, doppelt kopieren schadet nicht.
+              </p>
+              <PeriodeKopieren ziel={periode} vorperioden={vorperioden} />
+            </section>
           )}
 
           <section className={karte}>

@@ -618,6 +618,10 @@ export type Database = {
         Returns: undefined;
       };
       name_aus_metadaten: { Args: { email: string; meta: Json }; Returns: string };
+      periode_kopieren: {
+        Args: { p_quelle: string; p_ziel: string };
+        Returns: { kopierte_key_results: number; kopierte_posten: number }[];
+      };
       sieht_alle_teams: { Args: Record<PropertyKey, never>; Returns: boolean };
     };
     Enums: {

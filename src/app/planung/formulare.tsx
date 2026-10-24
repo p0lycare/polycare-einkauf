@@ -7,6 +7,7 @@ import { feldKlein, knopfKlein } from "@/lib/stil";
 import {
   keyResultLoeschen,
   keyResultSpeichern,
+  periodeKopieren,
   periodeSpeichern,
   postenLoeschen,
   postenSpeichern,
@@ -127,5 +128,24 @@ export function PostenZeile({
       </form>
       {posten && <Loeschen id={posten.id} aktion={postenLoeschen} />}
     </div>
+  );
+}
+
+/** Key Results und Budgetposten einer früheren Periode als Vorlage in die Periode in Planung übernehmen. */
+export function PeriodeKopieren({ ziel, vorperioden }: { ziel: Auswahl; vorperioden: Auswahl[] }) {
+  const [status, absenden, laeuft] = useActionState(periodeKopieren, {});
+  return (
+    <form onSubmit={ohneZuruecksetzen(absenden)} className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+      <input type="hidden" name="ziel" value={ziel.id} />
+      <span>Vorlage aus</span>
+      <select name="quelle" defaultValue={vorperioden[0]?.id} aria-label="Vorperiode" className={feldKlein}>
+        {vorperioden.map((p) => (
+          <option key={p.id} value={p.id}>{p.name}</option>
+        ))}
+      </select>
+      <button type="submit" disabled={laeuft} className={knopfKlein}>{laeuft ? "…" : `In ${ziel.name} übernehmen`}</button>
+      {status.fehler && <span role="alert" className="text-red-700 dark:text-red-400">{status.fehler}</span>}
+      {status.meldung && <span role="status" className="text-green-700 dark:text-green-400">{status.meldung}</span>}
+    </form>
   );
 }
