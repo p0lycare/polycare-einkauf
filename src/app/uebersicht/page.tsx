@@ -140,7 +140,12 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
           </section>
 
           <section className="overflow-x-auto">
-            <h2 className="mb-2 font-medium">Teams</h2>
+            <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="font-medium">Teams</h2>
+              <Link href={`/uebersicht/key-results?periode=${periode.id}`} className="text-sm text-marke-dunkel hover:underline">
+                Auswertung je Key Result →
+              </Link>
+            </div>
             {!jeTeam.length ? (
               <p className={leer}>Für diese Periode ist noch kein Budget geplant.</p>
             ) : (

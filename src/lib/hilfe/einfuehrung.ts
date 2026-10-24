@@ -90,7 +90,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Überblick",
-          text: `Unter „Übersicht“ siehst du auf einen Blick alle Teams mit Budget und Auslastung, alle offenen Freigaben mit Wartezeit (rot ab ${LANGE_WARTEZEIT_TAGE} Tagen), mögliche Stückelungen und alle außerplanmäßigen Anforderungen. Einzelne Budgetposten stehen unter „Budget“.`,
+          text: `Unter „Übersicht“ siehst du auf einen Blick alle Teams mit Budget und Auslastung, alle offenen Freigaben mit Wartezeit (rot ab ${LANGE_WARTEZEIT_TAGE} Tagen), mögliche Stückelungen und alle außerplanmäßigen Anforderungen. Von dort geht es zur Auswertung je Key Result. Einzelne Budgetposten stehen unter „Budget“.`,
         },
       ],
     },
@@ -126,7 +126,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Übersicht",
-          text: "Unter „Übersicht“ stehen Summen und Auslastung aller Teams, offene Freigaben und außerplanmäßige Ausgaben der Periode.",
+          text: "Unter „Übersicht“ stehen Summen und Auslastung aller Teams, offene Freigaben und außerplanmäßige Ausgaben der Periode. „Auswertung je Key Result“ vergleicht Plan und Ausgaben je Key Result – für die OKR-Retro, auch als CSV für Excel.",
         },
       ],
     },

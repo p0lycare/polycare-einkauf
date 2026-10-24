@@ -42,7 +42,7 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 - Wareneingang und Rechnungen → „ausgegeben“ (mit Silvia und dem Einkauf gestalten)
 - Agicap: Budgetplan und erwartete Abflüsse schreiben
 - DATEV-Übergabe der Rechnungen
-- Auswertung je Key Result für die OKR-Retro
+- ~~Auswertung je Key Result für die OKR-Retro~~ ✅ vorgezogen: `/uebersicht/key-results` mit CSV-Export
 - Reisekosten-App: deren Absender-Postfach in den Exchange-Scope „Polycare Mailversand“ aufnehmen
   (gleiche Entra-App, bisher darf sie nur aus einkauf@polycare.de senden)
 - Eigenes Supabase-Projekt für Vorschau-Umgebungen (bisher teilen Vorschau und Live eine Datenbank)
