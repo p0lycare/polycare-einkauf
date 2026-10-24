@@ -28,7 +28,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Budgetübersicht (geplant / in Freigabe / gebunden / verfügbar) | ✅ |
 | Planung: Perioden, Key Results, Budgetposten | ✅ |
 | Verwaltung: Teams, Teamleitungen, Rollen, Freigabegrenze | ✅ |
-| Mail-Benachrichtigungen (Microsoft 365) | ⏳ |
+| Mail-Benachrichtigungen (Microsoft 365) | ✅ `src/lib/mail`, Testmail und Protokoll unter Verwaltung |
 | Angebot hochladen, per KI auslesen | ✅ `src/lib/ki`, Bucket `angebote` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |
@@ -61,4 +61,12 @@ npm run lint && npm run typecheck && npm test && npm run build
 npm run test:db   # Workflow- und Berechtigungstests gegen ein Postgres (PGHOST, PGUSER, … setzen)
 ```
 
-Nach Schemaänderungen die Typen neu erzeugen: `npm run db:types`.
+## Datenbank ändern
+
+1. Neue Migration unter `supabase/migrations/` anlegen (fortlaufend nummeriert, z. B. `0002_….sql`)
+2. `npm run test:db` und danach die Typen neu erzeugen: `npm run db:types`
+3. Nach dem Merge auf `main` spielt die Action **Datenbank** (`.github/workflows/datenbank.yml`) die
+   Migration ins Supabase-Projekt ein. Sie verbindet sich direkt mit der Datenbank und braucht nur das
+   Repository-Secret `SUPABASE_DB_PASSWORD`.
+
+Plan bis zum Start: [docs/plan.md](docs/plan.md)

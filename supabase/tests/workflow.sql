@@ -228,5 +228,40 @@ select test.als('ma@test');
 delete from anforderung where titel = 'Pipetten';
 select test.pruefe(test.anforderung('Pipetten') is not null, 'bestellte Anforderung bleibt');
 
+-- ---------------------------------------------------------------------------
+-- Mail-Empfänger
+-- ---------------------------------------------------------------------------
+reset role;
+create function test.empfaenger(p_titel text, p_anlass text) returns text
+  language sql as $$
+  select coalesce(string_agg(email, ',' order by email), '') from mail_empfaenger(test.anforderung(p_titel), p_anlass);
+$$;
+grant execute on function test.empfaenger(text, text) to authenticated;
+set role authenticated;
+
+select test.als('ma@test');
+insert into anforderung (ersteller_id, periode_id, team_id, budgetposten_id, titel, betrag_cent)
+select auth.uid(), b.periode_id, b.team_id, b.id, 'Handschuhe', 1000 from budgetposten b where b.name = 'Laborbedarf';
+select anforderung_einreichen(test.anforderung('Handschuhe'));
+select test.pruefe(test.empfaenger('Handschuhe', 'zur_freigabe') = 'tl@test', 'Mail an Teamleitung');
+select test.pruefe(test.empfaenger('Laptop TL', 'zur_freigabe') = '', 'fremde Anforderung: keine Empfänger');
+
+select test.als('tl@test');
+select test.pruefe(test.empfaenger('Messestand', 'zur_freigabe') = 'gf2@test,gf@test', 'Mail an alle GF');
+select test.pruefe(test.empfaenger('Laptop TL', 'zur_freigabe') = 'gf2@test,gf@test', 'eigene Anforderung der Teamleitung → GF');
+select test.pruefe(test.empfaenger('Waage', 'zum_bestellen') = 'ek@test', 'Mail an Einkauf');
+select test.pruefe(test.empfaenger('Handschuhe', 'zum_bestellen') = '', 'noch nicht freigegeben: kein Einkauf');
+select test.pruefe(test.empfaenger('Pipetten', 'bestellt') = 'ma@test', 'Mail an anfordernde Person');
+
+select test.als('gf2@test');
+select test.pruefe(test.empfaenger('GF-Wunsch', 'zur_freigabe') = '', 'GF-Wunsch ist schon freigegeben');
+
+select test.als('prod@test');
+select test.pruefe(test.empfaenger('Pipetten', 'bestellt') = '', 'anderes Team bekommt keine Empfänger');
+select mail_protokollieren(null, 'test', array['x@test'], 'Betreff', 'gesendet', '');
+select test.pruefe((select count(*) = 0 from mail_protokoll), 'Protokoll nur für Admins lesbar');
+select test.als('admin@test');
+select test.pruefe((select count(*) = 1 from mail_protokoll), 'Admin liest Protokoll');
+
 reset role;
 \echo 'Alle Datenbanktests bestanden.'
