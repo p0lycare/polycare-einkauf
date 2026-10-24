@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { parseEuro } from "@/lib/geld";
+import { mailKonfiguration, sendeMail } from "@/lib/mail/graph";
+import { appUrl } from "@/lib/mail/benachrichtigen";
 
 export type Status = { fehler?: string; gespeichert?: boolean };
 
@@ -48,4 +50,44 @@ export async function einstellungenSpeichern(_vorher: Status, formData: FormData
   const supabase = await createClient();
   const { error } = await supabase.from("einstellungen").update({ gf_grenze_cent: grenze }).eq("id", true);
   return ergebnis(error, "Speichern fehlgeschlagen.");
+}
+
+export type TestmailStatus = { fehler?: string; gesendetAn?: string };
+
+export async function testmailSenden(): Promise<TestmailStatus> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: profil } = await supabase.from("profile").select("email, ist_admin").eq("id", user!.id).single();
+  if (!profil?.ist_admin) return { fehler: "Keine Berechtigung." };
+  if (!mailKonfiguration()) return { fehler: "E-Mail-Versand ist noch nicht eingerichtet (Env-Variablen fehlen)." };
+
+  const betreff = "Testmail – Polycare Einkauf";
+  const protokoll = (status: "gesendet" | "fehler", fehler = "") =>
+    supabase.rpc("mail_protokollieren", {
+      p_anforderung: null as unknown as string,
+      p_anlass: "test",
+      p_an: [profil.email],
+      p_betreff: betreff,
+      p_status: status,
+      p_fehler: fehler,
+    });
+  try {
+    const link = await appUrl();
+    await sendeMail({
+      an: [profil.email],
+      betreff,
+      text: `Der E-Mail-Versand funktioniert.\n\n${link}`,
+      html: `<p>Der E-Mail-Versand funktioniert.</p><p><a href="${link}">${link}</a></p>`,
+    });
+    await protokoll("gesendet");
+    revalidatePath("/verwaltung");
+    return { gesendetAn: profil.email };
+  } catch (e) {
+    const fehler = e instanceof Error ? e.message : String(e);
+    await protokoll("fehler", fehler);
+    revalidatePath("/verwaltung");
+    return { fehler };
+  }
 }
