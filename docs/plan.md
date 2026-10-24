@@ -5,14 +5,14 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 
 ## Woche 1 – startklar machen
 
-- [ ] **1. Datenbank-Updates automatisch einspielen** – GitHub Action spielt neue Migrationen nach jedem
+- [x] **1. Datenbank-Updates automatisch einspielen** – GitHub Action spielt neue Migrationen nach jedem
       Merge auf `main` ins Supabase-Projekt ein (`.github/workflows/datenbank.yml`)
-- [ ] **2. Mail-Benachrichtigungen über Microsoft 365**
+- [x] **2. Mail-Benachrichtigungen über Microsoft 365**
   - Eingereicht → Teamleitung bzw. GF, mit Link zur Freigabe
   - Freigegeben / abgelehnt (mit Grund) → anfordernde Person
   - Endgültig freigegeben → Einkauf
   - Bestellt → anfordernde Person
-- [ ] **3. Angebot hochladen, per KI auslesen**
+- [x] **3. Angebot hochladen, per KI auslesen**
   - PDF/Foto an die Anforderung hängen, für Freigebende und Einkauf sichtbar
   - Claude liest Lieferant, Betrag brutto, Artikel, Link aus und füllt das Formular vor
 
@@ -39,14 +39,16 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 - Agicap: Budgetplan und erwartete Abflüsse schreiben
 - DATEV-Übergabe der Rechnungen
 - Auswertung je Key Result für die OKR-Retro
+- Reisekosten-App: deren Absender-Postfach in den Exchange-Scope „Polycare Mailversand“ aufnehmen
+  (gleiche Entra-App, bisher darf sie nur aus einkauf@polycare.de senden)
 - Eigenes Supabase-Projekt für Vorschau-Umgebungen (bisher teilen Vorschau und Live eine Datenbank)
 
 ## Was noch gebraucht wird
 
 | Für | Was | Wo |
 | --- | --- | --- |
-| 1 | Supabase Access Token, Datenbank-Passwort | GitHub → Settings → Secrets |
-| 2 | Mail-Zugangsdaten (`MAIL_*`) wie bei der Reisekosten-App, Absenderadresse | Vercel → Environment Variables |
-| 3 | `ANTHROPIC_API_KEY` wie bei der Reisekosten-App | Vercel → Environment Variables |
+| 1 | ~~Supabase Access Token~~ (nicht mehr nötig), Datenbank-Passwort ✅ | GitHub → Settings → Secrets |
+| 2 | Mail-Zugangsdaten (`MAIL_*`), Absender einkauf@polycare.de ✅ | Vercel → Environment Variables |
+| 3 | `ANTHROPIC_API_KEY` ✅ | Vercel → Environment Variables |
 | 5 | Zugang zum Agicap-MCP (als Connector in Claude) | claude.ai → Connectors |
 | Start | Budgetplan und Key Results Q4 2026 | in der App unter Planung |
