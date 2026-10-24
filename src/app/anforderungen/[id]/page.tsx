@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ladeIch } from "@/lib/einkauf/ich";
+import { ladeIch, sichtAufAlleTeams } from "@/lib/einkauf/ich";
 import { formatNr } from "@/lib/einkauf/anforderung";
+import { STUECKELUNG_FENSTER_TAGE, stueckelungZu, type StueckelungsKandidat } from "@/lib/einkauf/stueckelung";
 import { formatDatum, formatEuro } from "@/lib/format";
 import { knopfSekundaer } from "@/lib/stil";
 import { anforderungLoeschen } from "../actions";
@@ -62,6 +63,25 @@ export default async function AnforderungSeite({
     freigeben: !!a.darf_freigeben,
     bestellen: ich.ist_einkauf && a.status === "freigegeben",
   };
+  // Hinweis auf gestückelte Anforderungen für alle, die Freigaben oder Ausgaben im Blick haben
+  const pruefeStueckelung =
+    (rechte.freigeben || sichtAufAlleTeams(ich)) && a.status !== "entwurf" && a.status !== "abgelehnt" && !!a.lieferant;
+  const [{ data: aehnliche }, { data: einstellungen }] = pruefeStueckelung
+    ? await Promise.all([
+        supabase
+          .from("anforderung")
+          .select("id, nr, titel, team_id, lieferant, betrag_cent, eingereicht_am, created_at")
+          .eq("team_id", a.team_id)
+          .neq("id", a.id)
+          .not("lieferant", "is", null)
+          .in("status", ["bei_teamleitung", "bei_gf", "freigegeben", "bestellt"])
+          .returns<StueckelungsKandidat[]>(),
+        supabase.from("einstellungen").select("gf_grenze_cent").single(),
+      ])
+    : [{ data: [] }, { data: null }];
+  const gfGrenzeCent = einstellungen?.gf_grenze_cent ?? 100000;
+  const stueckelung = pruefeStueckelung ? stueckelungZu(a, aehnliche ?? [], gfGrenzeCent) : null;
+
   const panelTitel = rechte.freigeben
     ? a.status === "bei_gf"
       ? "Freigabe Geschäftsführung"
@@ -102,6 +122,27 @@ export default async function AnforderungSeite({
         <p role="alert" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
           Die Anforderung ist gespeichert, aber das Angebot konnte nicht angehängt werden. Bitte über „Bearbeiten“ erneut hochladen.
         </p>
+      )}
+
+      {stueckelung && (
+        <div role="note" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          <p className="font-medium">Mögliche Stückelung</p>
+          <p className="mt-1">
+            Beim selben Lieferanten gibt es in diesem Team innerhalb von {STUECKELUNG_FENSTER_TAGE} Tagen weitere Anforderungen.
+            Jede liegt unter der Freigabegrenze von {formatEuro(gfGrenzeCent)}, zusammen sind es {formatEuro(stueckelung.summeCent)}.
+            Bitte prüfen, ob das eine Bestellung ist, die die Geschäftsführung freigeben sollte.
+          </p>
+          <ul className="mt-2">
+            {stueckelung.treffer.map((k) => (
+              <li key={k.id}>
+                <Link href={`/anforderungen/${k.id}`} className="underline">
+                  {formatNr(k.nr)} {k.titel}
+                </Link>{" "}
+                · {formatEuro(k.betrag_cent)} · {formatDatum(k.eingereicht_am ?? k.created_at)}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <WorkflowPanel id={a.id} rechte={rechte} titel={panelTitel} />

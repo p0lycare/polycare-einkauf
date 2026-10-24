@@ -30,7 +30,8 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Verwaltung: Teams, Teamleitungen, Rollen, Freigabegrenze | ✅ |
 | Mail-Benachrichtigungen (Microsoft 365) | ✅ `src/lib/mail`, Testmail und Protokoll unter Verwaltung |
 | Angebot hochladen, per KI auslesen | ✅ `src/lib/ki`, Bucket `angebote` |
-| Übersicht für GF und Finanzen | ✅ `/uebersicht`: Teams, offene Freigaben, außerplanmäßig |
+| Übersicht für GF und Finanzen | ✅ `/uebersicht`: Teams, offene Freigaben, Stückelung, außerplanmäßig |
+| Hinweis auf gestückelte Anforderungen | ✅ `src/lib/einkauf/stueckelung.ts`, an der Anforderung und in der Übersicht |
 | Einführung je Rolle | ✅ `/hilfe`, Texte in `src/lib/hilfe/einfuehrung.ts` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |

@@ -64,7 +64,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Prüfen und entscheiden",
-          text: "Angebot, Betrag und Budgetposten ansehen, dann „Freigeben“ oder „Ablehnen“. Für eine Ablehnung ist ein Grund Pflicht – die anfordernde Person sieht ihn.",
+          text: "Angebot, Betrag und Budgetposten ansehen, dann „Freigeben“ oder „Ablehnen“. Für eine Ablehnung ist ein Grund Pflicht – die anfordernde Person sieht ihn. Ein gelber Hinweis „Mögliche Stückelung“ zeigt, wenn es beim selben Lieferanten kurz zuvor weitere Anforderungen gab, die zusammen über der Freigabegrenze liegen.",
         },
         {
           titel: "Wann die Geschäftsführung dazukommt",
@@ -90,7 +90,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Überblick",
-          text: `Unter „Übersicht“ siehst du auf einen Blick alle Teams mit Budget und Auslastung, alle offenen Freigaben mit Wartezeit (rot ab ${LANGE_WARTEZEIT_TAGE} Tagen) und alle außerplanmäßigen Anforderungen. Einzelne Budgetposten stehen unter „Budget“.`,
+          text: `Unter „Übersicht“ siehst du auf einen Blick alle Teams mit Budget und Auslastung, alle offenen Freigaben mit Wartezeit (rot ab ${LANGE_WARTEZEIT_TAGE} Tagen), mögliche Stückelungen und alle außerplanmäßigen Anforderungen. Einzelne Budgetposten stehen unter „Budget“.`,
         },
       ],
     },

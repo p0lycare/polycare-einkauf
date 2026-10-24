@@ -12,7 +12,8 @@ import {
   type BudgetZeile,
   type Summen,
 } from "@/lib/einkauf/uebersicht";
-import { formatEuro } from "@/lib/format";
+import { STUECKELUNG_FENSTER_TAGE, stueckelungsGruppen, type StueckelungsKandidat } from "@/lib/einkauf/stueckelung";
+import { formatDatum, formatEuro } from "@/lib/format";
 import { karte, leer } from "@/lib/stil";
 
 type Offen = {
@@ -63,7 +64,7 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
   const periode =
     perioden?.find((p) => p.id === gewuenscht) ?? perioden?.find((p) => p.status === "aktiv") ?? perioden?.[0];
 
-  const [{ data: zeilen }, { data: offen }, { data: ausserplan }] = periode
+  const [{ data: zeilen }, { data: offen }, { data: ausserplan }, { data: eingereicht }, { data: einstellungen }] = periode
     ? await Promise.all([
         supabase.rpc("budget_stand", { p_periode: periode.id }),
         supabase
@@ -81,13 +82,24 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
           .in("status", ["bei_teamleitung", "bei_gf", "freigegeben", "bestellt"])
           .order("eingereicht_am", { ascending: false })
           .returns<Offen[]>(),
+        supabase
+          .from("anforderung")
+          .select("id, nr, titel, team_id, lieferant, betrag_cent, eingereicht_am, created_at")
+          .eq("periode_id", periode.id)
+          .not("lieferant", "is", null)
+          .in("status", ["bei_teamleitung", "bei_gf", "freigegeben", "bestellt"])
+          .returns<StueckelungsKandidat[]>(),
+        supabase.from("einstellungen").select("gf_grenze_cent").single(),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }, { data: null }];
 
   const budget = (zeilen ?? []) as BudgetZeile[];
   const gesamt: Summen = summiere(budget);
   const jeTeam = summenJeTeam(teams ?? [], budget);
   const offenJeTeam = (teamId: string) => (offen ?? []).filter((a) => a.team_id === teamId).length;
+  const gfGrenzeCent = einstellungen?.gf_grenze_cent ?? 100000;
+  const gestueckelt = stueckelungsGruppen(eingereicht ?? [], gfGrenzeCent);
+  const teamName = new Map((teams ?? []).map((t) => [t.id, t.name]));
   const jetzt = new Date();
   // Bei der GF wartet eine Anforderung seit der Freigabe der Teamleitung
   const wartetSeit = (a: Offen) => a.teamleitung_am ?? a.eingereicht_am ?? jetzt.toISOString();
@@ -195,6 +207,40 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
                     </li>
                   );
                 })}
+              </ul>
+            )}
+          </section>
+
+          <section>
+            <h2 className="mb-2 font-medium">Mögliche Stückelung</h2>
+            <p className="mb-2 text-sm text-neutral-500">
+              Mehrere Anforderungen eines Teams beim selben Lieferanten innerhalb von {STUECKELUNG_FENSTER_TAGE} Tagen, jede
+              unter der Freigabegrenze von {formatEuro(gfGrenzeCent)}, zusammen darüber.
+            </p>
+            {!gestueckelt.length ? (
+              <p className={leer}>Nichts Auffälliges.</p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {gestueckelt.map((g) => (
+                  <li key={`${g.team_id}|${g.lieferant}`} className="border-l-4 border-amber-400 bg-flaeche p-3 text-sm">
+                    <p className="flex flex-wrap justify-between gap-2">
+                      <span className="font-medium">
+                        {g.lieferant} · {teamName.get(g.team_id)}
+                      </span>
+                      <span className="tabular-nums">zusammen {formatEuro(g.summeCent)}</span>
+                    </p>
+                    <ul className="mt-1 text-neutral-600 dark:text-neutral-400">
+                      {g.anforderungen.map((k) => (
+                        <li key={k.id}>
+                          <Link href={`/anforderungen/${k.id}`} className="hover:underline">
+                            {formatNr(k.nr)} {k.titel}
+                          </Link>{" "}
+                          · {formatEuro(k.betrag_cent)} · {formatDatum(k.eingereicht_am ?? k.created_at)}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
               </ul>
             )}
           </section>
