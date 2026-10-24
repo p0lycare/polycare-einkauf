@@ -10,4 +10,6 @@ psql -q -v ON_ERROR_STOP=1 -d "$db" -f tests/supabase-stub.sql
 for m in migrations/*.sql; do
   psql -q -v ON_ERROR_STOP=1 -d "$db" -f "$m"
 done
-psql -q -v ON_ERROR_STOP=1 -d "$db" -o /dev/null -f tests/workflow.sql
+for t in tests/workflow.sql tests/angebote.sql; do
+  psql -q -v ON_ERROR_STOP=1 -d "$db" -o /dev/null -f "$t"
+done

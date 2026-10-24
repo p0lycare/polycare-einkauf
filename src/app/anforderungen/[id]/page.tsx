@@ -19,10 +19,17 @@ function Zeile({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-export default async function AnforderungSeite({ params }: { params: Promise<{ id: string }> }) {
+export default async function AnforderungSeite({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ angebot?: string }>;
+}) {
   const { id } = await params;
+  const { angebot } = await searchParams;
   const supabase = await createClient();
-  const [ich, { data: a }] = await Promise.all([
+  const [ich, { data: a }, { data: dateien }] = await Promise.all([
     ladeIch(supabase),
     supabase
       .from("anforderung")
@@ -37,8 +44,15 @@ export default async function AnforderungSeite({ params }: { params: Promise<{ i
       )
       .eq("id", id)
       .maybeSingle(),
+    supabase.from("anforderung_datei").select("id, pfad, name").eq("anforderung_id", id).order("created_at"),
   ]);
   if (!a || !ich) notFound();
+
+  // Kurzlebige Links zu den Angeboten (privater Bucket)
+  const { data: links } = dateien?.length
+    ? await supabase.storage.from("angebote").createSignedUrls(dateien.map((d) => d.pfad), 600)
+    : { data: [] };
+  const angebote = (dateien ?? []).map((d, i) => ({ ...d, url: links?.[i]?.signedUrl ?? null }));
 
   const eigene = a.ersteller_id === ich.id;
   const bearbeitbar = eigene && (a.status === "entwurf" || a.status === "abgelehnt");
@@ -84,6 +98,12 @@ export default async function AnforderungSeite({ params }: { params: Promise<{ i
         </p>
       )}
 
+      {angebot === "fehler" && (
+        <p role="alert" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          Die Anforderung ist gespeichert, aber das Angebot konnte nicht angehängt werden. Bitte über „Bearbeiten“ erneut hochladen.
+        </p>
+      )}
+
       <WorkflowPanel id={a.id} rechte={rechte} titel={panelTitel} />
 
       <dl className="divide-y divide-neutral-100 dark:divide-neutral-900">
@@ -97,6 +117,23 @@ export default async function AnforderungSeite({ params }: { params: Promise<{ i
           </Zeile>
         )}
         {a.lieferant && <Zeile label="Lieferant">{a.lieferant}</Zeile>}
+        {angebote.length > 0 && (
+          <Zeile label="Angebot">
+            <ul>
+              {angebote.map((d) => (
+                <li key={d.id}>
+                  {d.url ? (
+                    <a href={d.url} target="_blank" rel="noreferrer" className="underline">
+                      📎 {d.name}
+                    </a>
+                  ) : (
+                    <span>📎 {d.name}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Zeile>
+        )}
         {a.link && (
           <Zeile label="Link">
             <a href={a.link} target="_blank" rel="noreferrer" className="underline">
