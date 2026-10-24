@@ -61,4 +61,12 @@ npm run lint && npm run typecheck && npm test && npm run build
 npm run test:db   # Workflow- und Berechtigungstests gegen ein Postgres (PGHOST, PGUSER, … setzen)
 ```
 
-Nach Schemaänderungen die Typen neu erzeugen: `npm run db:types`.
+## Datenbank ändern
+
+1. Neue Migration unter `supabase/migrations/` anlegen (fortlaufend nummeriert, z. B. `0002_….sql`)
+2. `npm run test:db` und danach die Typen neu erzeugen: `npm run db:types`
+3. Nach dem Merge auf `main` spielt die Action **Datenbank** (`.github/workflows/datenbank.yml`) die
+   Migration ins Supabase-Projekt ein. Sie braucht die Repository-Secrets `SUPABASE_ACCESS_TOKEN` und
+   `SUPABASE_DB_PASSWORD`.
+
+Plan bis zum Start: [docs/plan.md](docs/plan.md)
