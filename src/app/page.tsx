@@ -25,7 +25,7 @@ export default async function Home() {
         </Link>
       </div>
       {!data?.length && (
-        <p className="rounded-lg bg-neutral-100 p-4 text-sm dark:bg-neutral-900">
+        <p className="rounded-md bg-marke-hell p-4 text-sm text-marke-dunkel">
           Neu hier? Die{" "}
           <Link href="/hilfe" className="underline">
             Einführung

@@ -1,4 +1,5 @@
 import { mitMicrosoftAnmelden } from "./actions";
+import { Logo } from "../logo";
 
 export default async function LoginPage({
   searchParams,
@@ -10,7 +11,8 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 p-6 font-sans">
       <div>
-        <h1 className="text-2xl font-semibold">Polycare Einkauf</h1>
+        <Logo className="mb-8 h-8 text-marke-dunkel dark:text-white" />
+        <h1 className="text-2xl font-semibold">Einkauf</h1>
         <p className="mt-2 text-neutral-600 dark:text-neutral-400">
           Melde dich mit deinem Polycare-Microsoft-Konto an.
         </p>

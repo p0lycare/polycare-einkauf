@@ -25,8 +25,8 @@ function Balken({ z }: { z: Zeile }) {
       role="img"
       aria-label={`${formatEuro(z.gebunden_cent)} gebunden, ${formatEuro(z.in_freigabe_cent)} in Freigabe von ${formatEuro(z.geplant_cent)}`}
     >
-      {gebunden > 0 && <div className="rounded-full bg-sky-700 dark:bg-sky-400" style={{ width: `${gebunden}%` }} />}
-      {freigabe > 0 && <div className="rounded-full bg-sky-300 dark:bg-sky-700" style={{ width: `${freigabe}%` }} />}
+      {gebunden > 0 && <div className="rounded-full bg-marke-dunkel" style={{ width: `${gebunden}%` }} />}
+      {freigabe > 0 && <div className="rounded-full bg-marke" style={{ width: `${freigabe}%` }} />}
     </div>
   );
 }
@@ -68,7 +68,7 @@ export default async function Budget({ searchParams }: { searchParams: Promise<{
               <Link
                 key={p.id}
                 href={`/budget?periode=${p.id}`}
-                className={`rounded-md px-2 py-1 ${p.id === periode?.id ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900" : "text-neutral-600 hover:underline dark:text-neutral-400"}`}
+                className={`rounded-md px-2 py-1 ${p.id === periode?.id ? "bg-primaer text-white dark:text-neutral-950" : "text-neutral-600 hover:underline dark:text-neutral-400"}`}
               >
                 {p.name}
               </Link>
@@ -78,8 +78,8 @@ export default async function Budget({ searchParams }: { searchParams: Promise<{
       </div>
 
       <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-500">
-        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-full bg-sky-700 dark:bg-sky-400" /> gebunden (freigegeben oder bestellt)</span>
-        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-full bg-sky-300 dark:bg-sky-700" /> in Freigabe</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-full bg-marke-dunkel" /> gebunden (freigegeben oder bestellt)</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-full bg-marke" /> in Freigabe</span>
         <span>Verfügbar = geplant − gebunden. Alle Beträge brutto.</span>
       </p>
 

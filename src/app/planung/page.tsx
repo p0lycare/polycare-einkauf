@@ -74,7 +74,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
                 <Link
                   key={p.id}
                   href={`/planung?periode=${p.id}`}
-                  className={`rounded-md px-2 py-1 ${p.id === periode.id ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900" : "text-neutral-600 hover:underline dark:text-neutral-400"}`}
+                  className={`rounded-md px-2 py-1 ${p.id === periode.id ? "bg-primaer text-white dark:text-neutral-950" : "text-neutral-600 hover:underline dark:text-neutral-400"}`}
                 >
                   {p.name}
                 </Link>
