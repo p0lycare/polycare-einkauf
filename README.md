@@ -28,7 +28,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Budgetübersicht (geplant / in Freigabe / gebunden / verfügbar) | ✅ |
 | Planung: Perioden, Key Results, Budgetposten | ✅ |
 | Verwaltung: Teams, Teamleitungen, Rollen, Freigabegrenze | ✅ |
-| Mail-Benachrichtigungen (Microsoft 365) | ⏳ |
+| Mail-Benachrichtigungen (Microsoft 365) | ✅ `src/lib/mail`, Testmail und Protokoll unter Verwaltung |
 | Angebot hochladen, per KI auslesen | ⏳ |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |

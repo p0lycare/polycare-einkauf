@@ -303,6 +303,58 @@ export type Database = {
           },
         ];
       };
+      mail_protokoll: {
+        Row: {
+          an: string[];
+          anforderung_id: string | null;
+          anlass: string;
+          ausgeloest_von: string | null;
+          betreff: string | null;
+          fehler: string | null;
+          id: number;
+          status: string;
+          zeit: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          an?: string[];
+          anforderung_id?: string | null;
+          anlass: string;
+          ausgeloest_von?: string | null;
+          betreff?: string | null;
+          fehler?: string | null;
+          id?: never;
+          status: string;
+          zeit?: string;
+        };
+        Update: {
+          an?: string[];
+          anforderung_id?: string | null;
+          anlass?: string;
+          ausgeloest_von?: string | null;
+          betreff?: string | null;
+          fehler?: string | null;
+          id?: never;
+          status?: string;
+          zeit?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mail_protokoll_anforderung_id_fkey";
+            columns: ["anforderung_id"];
+            isOneToOne: false;
+            referencedRelation: "anforderung";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mail_protokoll_ausgeloest_von_fkey";
+            columns: ["ausgeloest_von"];
+            isOneToOne: false;
+            referencedRelation: "profile";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       periode: {
         Row: {
           beginn: string;
@@ -507,6 +559,23 @@ export type Database = {
       ist_finanzen: { Args: Record<PropertyKey, never>; Returns: boolean };
       ist_gf: { Args: Record<PropertyKey, never>; Returns: boolean };
       ist_teamleitung: { Args: { p_team: string }; Returns: boolean };
+      mail_empfaenger: {
+        Args: { p_anforderung: string; p_anlass: string };
+        Returns: {
+          email: string;
+        }[];
+      };
+      mail_protokollieren: {
+        Args: {
+          p_an: string[];
+          p_anforderung: string;
+          p_anlass: string;
+          p_betreff: string;
+          p_fehler: string;
+          p_status: string;
+        };
+        Returns: undefined;
+      };
       name_aus_metadaten: { Args: { email: string; meta: Json }; Returns: string };
       sieht_alle_teams: { Args: Record<PropertyKey, never>; Returns: boolean };
     };
