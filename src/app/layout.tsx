@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import { Geist_Mono, Inter } from "next/font/google";
+import { Kopfzeile } from "./kopfzeile";
 import { createClient } from "@/lib/supabase/server";
 import { gibtFrei, ladeIch, plant } from "@/lib/einkauf/ich";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Inter als frei verfügbare Nähe zur Hausschrift TT Interphases
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -19,17 +20,6 @@ export const metadata: Metadata = {
   title: "Polycare Einkauf",
   description: "Bestellanforderungen gegen das Quartalsbudget, Freigabe und Bestellung",
 };
-
-const navLink = "text-neutral-600 hover:underline dark:text-neutral-400";
-
-function Zaehler({ anzahl }: { anzahl: number }) {
-  if (anzahl <= 0) return null;
-  return (
-    <span className="ml-1 rounded-full bg-neutral-900 px-1.5 py-0.5 text-xs text-white dark:bg-white dark:text-neutral-900">
-      {anzahl}
-    </span>
-  );
-}
 
 export default async function RootLayout({
   children,
@@ -54,52 +44,17 @@ export default async function RootLayout({
 
   return (
     <html lang="de">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${inter.variable} ${geistMono.variable} antialiased`}>
         {ich && (
-          <header className="border-b border-neutral-200 dark:border-neutral-800">
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-6 py-3 font-sans">
-              <Link href="/" className="font-semibold">
-                Polycare Einkauf
-              </Link>
-              <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                {gibtFrei(ich) && (
-                  <Link href="/freigaben" className={navLink}>
-                    Freigaben
-                    <Zaehler anzahl={freigaben ?? 0} />
-                  </Link>
-                )}
-                {ich.ist_einkauf && (
-                  <Link href="/einkauf" className={navLink}>
-                    Einkauf
-                    <Zaehler anzahl={bestellen ?? 0} />
-                  </Link>
-                )}
-                <Link href="/budget" className={navLink}>
-                  Budget
-                </Link>
-                {plant(ich) && (
-                  <Link href="/planung" className={navLink}>
-                    Planung
-                  </Link>
-                )}
-                {ich.ist_admin && (
-                  <Link href="/verwaltung" className={navLink}>
-                    Verwaltung
-                  </Link>
-                )}
-                <Link href="/hilfe" className={navLink}>
-                  Hilfe
-                </Link>
-                <span className="hidden text-neutral-400 sm:inline">|</span>
-                <span className="hidden text-neutral-600 sm:inline dark:text-neutral-400">{ich.name}</span>
-                <form action="/auth/logout" method="post">
-                  <button type="submit" className="text-neutral-600 underline dark:text-neutral-400">
-                    Abmelden
-                  </button>
-                </form>
-              </nav>
-            </div>
-          </header>
+          <Kopfzeile
+            daten={{
+              name: ich.name,
+              freigaben: gibtFrei(ich) ? (freigaben ?? 0) : null,
+              bestellen: ich.ist_einkauf ? (bestellen ?? 0) : null,
+              zeigePlanung: plant(ich),
+              zeigeVerwaltung: ich.ist_admin,
+            }}
+          />
         )}
         {children}
       </body>
