@@ -84,3 +84,24 @@ export async function postenLoeschen(_vorher: Status, formData: FormData): Promi
   const { error } = await supabase.from("budgetposten").delete().eq("id", text(formData, "id"));
   return ergebnis(error, "Löschen fehlgeschlagen.");
 }
+
+export type KopierStatus = { fehler?: string; meldung?: string };
+
+export async function periodeKopieren(_vorher: KopierStatus, formData: FormData): Promise<KopierStatus> {
+  const quelle = text(formData, "quelle");
+  const ziel = text(formData, "ziel");
+  if (!quelle || !ziel) return { fehler: "Bitte eine Vorperiode wählen." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("periode_kopieren", { p_quelle: quelle, p_ziel: ziel }).single();
+  revalidatePath("/planung");
+  revalidatePath("/budget");
+  if (error) {
+    if (error.message.includes("Keine Berechtigung")) return { fehler: "Nur Finanzen und Admins kopieren Perioden." };
+    if (error.message.includes("in Planung")) return { fehler: "Kopieren geht nur in eine Periode, die in Planung ist." };
+    return { fehler: "Kopieren fehlgeschlagen." };
+  }
+  const { kopierte_key_results: kr, kopierte_posten: posten } = data;
+  if (!kr && !posten) return { meldung: "Nichts zu übernehmen – alles ist schon vorhanden." };
+  return { meldung: `${kr} Key Results und ${posten} Budgetposten übernommen. Beträge bitte prüfen.` };
+}
