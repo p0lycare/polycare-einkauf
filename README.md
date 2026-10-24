@@ -30,6 +30,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Verwaltung: Teams, Teamleitungen, Rollen, Freigabegrenze | ✅ |
 | Mail-Benachrichtigungen (Microsoft 365) | ✅ `src/lib/mail`, Testmail und Protokoll unter Verwaltung |
 | Angebot hochladen, per KI auslesen | ✅ `src/lib/ki`, Bucket `angebote` |
+| Einführung je Rolle | ✅ `/hilfe`, Texte in `src/lib/hilfe/einfuehrung.ts` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |
 

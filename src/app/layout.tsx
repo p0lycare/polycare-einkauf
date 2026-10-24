@@ -87,6 +87,9 @@ export default async function RootLayout({
                     Verwaltung
                   </Link>
                 )}
+                <Link href="/hilfe" className={navLink}>
+                  Hilfe
+                </Link>
                 <span className="hidden text-neutral-400 sm:inline">|</span>
                 <span className="hidden text-neutral-600 sm:inline dark:text-neutral-400">{ich.name}</span>
                 <form action="/auth/logout" method="post">
