@@ -66,7 +66,7 @@ npm run test:db   # Workflow- und Berechtigungstests gegen ein Postgres (PGHOST,
 1. Neue Migration unter `supabase/migrations/` anlegen (fortlaufend nummeriert, z. B. `0002_….sql`)
 2. `npm run test:db` und danach die Typen neu erzeugen: `npm run db:types`
 3. Nach dem Merge auf `main` spielt die Action **Datenbank** (`.github/workflows/datenbank.yml`) die
-   Migration ins Supabase-Projekt ein. Sie braucht die Repository-Secrets `SUPABASE_ACCESS_TOKEN` und
-   `SUPABASE_DB_PASSWORD`.
+   Migration ins Supabase-Projekt ein. Sie verbindet sich direkt mit der Datenbank und braucht nur das
+   Repository-Secret `SUPABASE_DB_PASSWORD`.
 
 Plan bis zum Start: [docs/plan.md](docs/plan.md)
