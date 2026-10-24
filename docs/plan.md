@@ -23,12 +23,12 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
   - Übersicht für die GF: alle Teams, Summen, offene Freigaben
   - Hinweis auf gestückelte Anforderungen (mehrere knapp unter 1.000 € beim selben Lieferanten)
 - [ ] **5. Agicap: Bestandsaufnahme** – welche Tools der MCP-Server anbietet, lesen/schreiben,
-      Entscheidung über die Anbindung (gebaut wird nach dem Start) – *verschoben, Connector kommt später*
-- [ ] **6. Feinschliff**
+      Entscheidung über die Anbindung (gebaut wird nach dem Start) – *Connector eingerichtet (nur Lesen), Bestandsaufnahme folgt*
+- [x] **6. Feinschliff**
   - [x] Hilfe-Seite: Einführung je Rolle (`/hilfe`)
   - [x] Erscheinungsbild wie die Reisekosten-App
-  - [ ] Handy-Ansicht prüfen
-  - [ ] Start-Text für alle
+  - [x] Handy-Ansicht prüfen (Tabellen unter Budget und Übersicht schmaler)
+  - [x] Start-Text für alle: [docs/start-text.md](start-text.md)
 
 ## Start-Montag
 

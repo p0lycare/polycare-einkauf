@@ -43,9 +43,10 @@ function Kennzahl({ titel, cent, hinweis, warnung }: { titel: string; cent: numb
   );
 }
 
-function Betrag({ cent, warnung }: { cent: number; warnung?: boolean }) {
+/** `breit`: Spalte erst ab Tablet-Breite zeigen */
+function Betrag({ cent, warnung, breit }: { cent: number; warnung?: boolean; breit?: boolean }) {
   return (
-    <td className={`px-2 py-2 text-right tabular-nums ${warnung && cent < 0 ? "font-medium text-red-700 dark:text-red-400" : ""}`}>
+    <td className={`px-2 py-2 text-right tabular-nums ${breit ? "hidden sm:table-cell" : ""} ${warnung && cent < 0 ? "font-medium text-red-700 dark:text-red-400" : ""}`}>
       {formatEuro(cent)}
     </td>
   );
@@ -143,13 +144,13 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
             {!jeTeam.length ? (
               <p className={leer}>Für diese Periode ist noch kein Budget geplant.</p>
             ) : (
-              <table className="w-full min-w-[40rem] text-sm">
+              <table className="w-full text-sm sm:min-w-[40rem]">
                 <thead className="text-left text-xs text-neutral-500">
                   <tr className="border-b border-neutral-200 dark:border-neutral-800">
                     <th className="py-2 pr-2 font-normal">Team</th>
-                    <th className="px-2 text-right font-normal">Geplant</th>
-                    <th className="px-2 text-right font-normal">In Freigabe</th>
-                    <th className="px-2 text-right font-normal">Gebunden</th>
+                    <th className="hidden px-2 text-right font-normal sm:table-cell">Geplant</th>
+                    <th className="hidden px-2 text-right font-normal sm:table-cell">In Freigabe</th>
+                    <th className="hidden px-2 text-right font-normal sm:table-cell">Gebunden</th>
                     <th className="px-2 text-right font-normal">Verfügbar</th>
                     <th className="px-2 text-right font-normal">Auslastung</th>
                     <th className="pl-2 text-right font-normal">Offen</th>
@@ -163,9 +164,9 @@ export default async function Uebersicht({ searchParams }: { searchParams: Promi
                         <td className="py-2 pr-2">
                           <Link href={`/budget?periode=${periode.id}`} className="hover:underline">{team.name}</Link>
                         </td>
-                        <Betrag cent={summen.geplant_cent} />
-                        <Betrag cent={summen.in_freigabe_cent} />
-                        <Betrag cent={summen.gebunden_cent} />
+                        <Betrag cent={summen.geplant_cent} breit />
+                        <Betrag cent={summen.in_freigabe_cent} breit />
+                        <Betrag cent={summen.gebunden_cent} breit />
                         <Betrag cent={summen.verfuegbar_cent} warnung />
                         <td className={`px-2 text-right tabular-nums ${prozent !== null && prozent > 100 ? "font-medium text-red-700 dark:text-red-400" : ""}`}>
                           {prozent === null ? "–" : `${prozent} %`}

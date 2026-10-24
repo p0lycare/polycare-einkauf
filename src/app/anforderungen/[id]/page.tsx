@@ -13,7 +13,7 @@ import { WorkflowPanel, type WorkflowRechte } from "./workflow/workflow-panel";
 
 function Zeile({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[9rem_1fr] gap-2 py-1.5 text-sm">
+    <div className="grid grid-cols-[7rem_1fr] gap-2 py-1.5 text-sm sm:grid-cols-[9rem_1fr]">
       <dt className="text-neutral-500">{label}</dt>
       <dd className="min-w-0 break-words">{children}</dd>
     </div>
