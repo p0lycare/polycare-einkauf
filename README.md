@@ -31,6 +31,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Mail-Benachrichtigungen (Microsoft 365) | ✅ `src/lib/mail`, Testmail und Protokoll unter Verwaltung |
 | Angebot hochladen, per KI auslesen | ✅ `src/lib/ki`, Bucket `angebote` |
 | Übersicht für GF und Finanzen | ✅ `/uebersicht`: Teams, offene Freigaben, Stückelung, außerplanmäßig |
+| Auswertung je Key Result | ✅ `/uebersicht/key-results`, CSV-Export für Finanzen |
 | Hinweis auf gestückelte Anforderungen | ✅ `src/lib/einkauf/stueckelung.ts`, an der Anforderung und in der Übersicht |
 | Einführung je Rolle | ✅ `/hilfe`, Texte in `src/lib/hilfe/einfuehrung.ts` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
