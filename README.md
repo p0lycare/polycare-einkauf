@@ -29,7 +29,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Planung: Perioden, Key Results, Budgetposten | ✅ |
 | Verwaltung: Teams, Teamleitungen, Rollen, Freigabegrenze | ✅ |
 | Mail-Benachrichtigungen (Microsoft 365) | ⏳ |
-| Angebot hochladen, per KI auslesen | ⏳ |
+| Angebot hochladen, per KI auslesen | ✅ `src/lib/ki`, Bucket `angebote` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |
 

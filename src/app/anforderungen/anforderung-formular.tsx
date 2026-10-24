@@ -7,7 +7,9 @@ import { centAlsEingabe, parseEuro } from "@/lib/geld";
 import { formatEuro } from "@/lib/format";
 import { freigabeweg } from "@/lib/einkauf/anforderung";
 import { feld, knopf, knopfSekundaer } from "@/lib/stil";
+import type { AngebotVorschlag } from "@/lib/ki/angebot-schema";
 import { anforderungSpeichern, type FormularStatus } from "./actions";
+import { AngebotBereich, type VorhandeneDatei } from "./angebot-bereich";
 
 export type FormularDaten = {
   perioden: { id: string; name: string }[];
@@ -56,11 +58,15 @@ export function AnforderungFormular({
   ichId,
   eigenesTeam,
   werte,
+  kiAktiv,
+  dateien = [],
 }: {
   daten: FormularDaten;
   ichId: string;
   eigenesTeam: string | null;
   werte?: AnforderungWerte;
+  kiAktiv: boolean;
+  dateien?: VorhandeneDatei[];
 }) {
   const [status, absenden, laeuft] = useActionState<FormularStatus, FormData>(anforderungSpeichern, {});
   const [periodeId, setPeriodeId] = useState(werte?.periode_id ?? daten.perioden[0]?.id ?? "");
@@ -68,6 +74,10 @@ export function AnforderungFormular({
   const [postenId, setPostenId] = useState(werte?.budgetposten_id ?? "");
   const [keyResultId, setKeyResultId] = useState(werte?.key_result_id ?? "");
   const [betrag, setBetrag] = useState(werte ? centAlsEingabe(werte.betrag_cent) : "");
+  const [titel, setTitel] = useState(werte?.titel ?? "");
+  const [lieferant, setLieferant] = useState(werte?.lieferant ?? "");
+  const [link, setLink] = useState(werte?.link ?? "");
+  const [beschreibung, setBeschreibung] = useState(werte?.beschreibung ?? "");
 
   if (!daten.perioden.length) {
     return (
@@ -94,6 +104,15 @@ export function AnforderungFormular({
       })
     : null;
 
+  /** KI-Vorschlag übernehmen; bereits Eingetipptes bleibt stehen */
+  function vorschlagUebernehmen(v: AngebotVorschlag) {
+    if (v.titel && !titel) setTitel(v.titel);
+    if (v.lieferant && !lieferant) setLieferant(v.lieferant);
+    if (v.link && !link) setLink(v.link);
+    if (v.beschreibung && !beschreibung) setBeschreibung(v.beschreibung);
+    if (v.betragCent && !betrag) setBetrag(centAlsEingabe(v.betragCent));
+  }
+
   function postenWaehlen(id: string) {
     setPostenId(id);
     // Key Result des Budgetpostens vorschlagen
@@ -105,8 +124,10 @@ export function AnforderungFormular({
     <form onSubmit={ohneZuruecksetzen(absenden)} className="flex flex-col gap-5">
       {werte && <input type="hidden" name="id" value={werte.id} />}
 
+      <AngebotBereich userId={ichId} kiAktiv={kiAktiv} vorhanden={dateien} onVorschlag={vorschlagUebernehmen} />
+
       <Feld label="Was soll bestellt werden?">
-        <input name="titel" required defaultValue={werte?.titel} className={feld} placeholder="z. B. Präzisionswaage 0,1 mg" />
+        <input name="titel" required value={titel} onChange={(e) => setTitel(e.target.value)} className={feld} placeholder="z. B. Präzisionswaage 0,1 mg" />
       </Feld>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -117,15 +138,15 @@ export function AnforderungFormular({
           <input type="date" name="gewuenscht_bis" defaultValue={werte?.gewuenscht_bis ?? ""} className={feld} />
         </Feld>
         <Feld label="Lieferant" hinweis="optional">
-          <input name="lieferant" defaultValue={werte?.lieferant ?? ""} className={feld} />
+          <input name="lieferant" value={lieferant} onChange={(e) => setLieferant(e.target.value)} className={feld} />
         </Feld>
         <Feld label="Link zum Produkt oder Angebot" hinweis="optional">
-          <input type="url" name="link" defaultValue={werte?.link ?? ""} className={feld} placeholder="https://" />
+          <input type="url" name="link" value={link} onChange={(e) => setLink(e.target.value)} className={feld} placeholder="https://" />
         </Feld>
       </div>
 
       <Feld label="Beschreibung" hinweis="Menge, Artikelnummer, Spezifikation – alles, was der Einkauf braucht">
-        <textarea name="beschreibung" rows={3} defaultValue={werte?.beschreibung ?? ""} className={feld} />
+        <textarea name="beschreibung" rows={4} value={beschreibung} onChange={(e) => setBeschreibung(e.target.value)} className={feld} />
       </Feld>
 
       <fieldset className="grid gap-4 rounded-lg border border-neutral-200 p-4 sm:grid-cols-2 dark:border-neutral-800">

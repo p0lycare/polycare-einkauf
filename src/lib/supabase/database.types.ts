@@ -151,6 +151,45 @@ export type Database = {
           },
         ];
       };
+      anforderung_datei: {
+        Row: {
+          anforderung_id: string;
+          content_type: string | null;
+          created_at: string;
+          groesse: number | null;
+          id: string;
+          name: string;
+          pfad: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          anforderung_id: string;
+          content_type?: string | null;
+          created_at?: string;
+          groesse?: number | null;
+          id?: string;
+          name: string;
+          pfad: string;
+        };
+        Update: {
+          anforderung_id?: string;
+          content_type?: string | null;
+          created_at?: string;
+          groesse?: number | null;
+          id?: string;
+          name?: string;
+          pfad?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "anforderung_datei_anforderung_id_fkey";
+            columns: ["anforderung_id"];
+            isOneToOne: false;
+            referencedRelation: "anforderung";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       anforderung_ereignis: {
         Row: {
           aktion: string;
@@ -412,6 +451,7 @@ export type Database = {
     };
     Functions: {
       anforderung_ablehnen: { Args: { p_grund: string; p_id: string }; Returns: undefined };
+      anforderung_bearbeitbar: { Args: { p_anforderung: string }; Returns: boolean };
       anforderung_bestellen: {
         Args: { p_bestellnummer?: string; p_id: string };
         Returns: undefined;
@@ -482,6 +522,7 @@ export type Database = {
         }[];
       };
       darf_anforderung_sehen: { Args: { p_ersteller: string; p_team: string }; Returns: boolean };
+      darf_angebot_sehen: { Args: { p_pfad: string }; Returns: boolean };
       darf_freigeben: {
         Args: {
           a: Omit<
