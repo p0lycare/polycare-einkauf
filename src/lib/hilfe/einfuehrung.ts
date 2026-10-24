@@ -1,4 +1,5 @@
 import type { Ich } from "@/lib/einkauf/ich";
+import { LANGE_WARTEZEIT_TAGE } from "@/lib/einkauf/uebersicht";
 
 /** Rollen in der Reihenfolge, in der die Einführung sie zeigt. Mitarbeitende sind alle. */
 export const ROLLEN = ["mitarbeitende", "teamleitung", "gf", "einkauf", "finanzen", "admin"] as const;
@@ -89,7 +90,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Überblick",
-          text: "Unter „Budget“ siehst du alle Teams mit geplant, gebunden und verfügbar.",
+          text: `Unter „Übersicht“ siehst du auf einen Blick alle Teams mit Budget und Auslastung, alle offenen Freigaben mit Wartezeit (rot ab ${LANGE_WARTEZEIT_TAGE} Tagen) und alle außerplanmäßigen Anforderungen. Einzelne Budgetposten stehen unter „Budget“.`,
         },
       ],
     },
@@ -122,6 +123,10 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         {
           titel: "Key Results und Budgets",
           text: "Key Results anlegen (teamübergreifend oder je Team) und Budgetposten aller Teams pflegen – auch dann, wenn die Periode schon aktiv ist.",
+        },
+        {
+          titel: "Übersicht",
+          text: "Unter „Übersicht“ stehen Summen und Auslastung aller Teams, offene Freigaben und außerplanmäßige Ausgaben der Periode.",
         },
       ],
     },

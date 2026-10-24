@@ -51,6 +51,7 @@ export default async function RootLayout({
               name: ich.name,
               freigaben: gibtFrei(ich) ? (freigaben ?? 0) : null,
               bestellen: ich.ist_einkauf ? (bestellen ?? 0) : null,
+              zeigeUebersicht: ich.ist_gf || ich.ist_finanzen || ich.ist_admin,
               zeigePlanung: plant(ich),
               zeigeVerwaltung: ich.ist_admin,
             }}
