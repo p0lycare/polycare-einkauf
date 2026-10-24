@@ -24,6 +24,15 @@ export default async function Home() {
           Neue Anforderung
         </Link>
       </div>
+      {!data?.length && (
+        <p className="rounded-lg bg-neutral-100 p-4 text-sm dark:bg-neutral-900">
+          Neu hier? Die{" "}
+          <Link href="/hilfe" className="underline">
+            Einführung
+          </Link>{" "}
+          zeigt in ein paar Schritten, wie Anfordern, Freigeben und Bestellen funktioniert – passend zu deiner Rolle.
+        </p>
+      )}
       <AnforderungsListe
         eintraege={(data ?? []).map((a) => ({ ...a, ersteller: null }))}
         leerText="Noch keine Anforderungen angelegt."
