@@ -43,8 +43,6 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 - Agicap: Budgetplan und erwartete Abflüsse schreiben
 - DATEV-Übergabe der Rechnungen
 - ~~Auswertung je Key Result für die OKR-Retro~~ ✅ vorgezogen: `/uebersicht/key-results` mit CSV-Export
-- Reisekosten-App: deren Absender-Postfach in den Exchange-Scope „Polycare Mailversand“ aufnehmen
-  (gleiche Entra-App, bisher darf sie nur aus einkauf@polycare.de senden)
 - Eigenes Supabase-Projekt für Vorschau-Umgebungen (bisher teilen Vorschau und Live eine Datenbank)
 
 ## Was noch gebraucht wird
@@ -52,7 +50,7 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 | Für | Was | Wo |
 | --- | --- | --- |
 | 1 | ~~Supabase Access Token~~ (nicht mehr nötig), Datenbank-Passwort ✅ | GitHub → Settings → Secrets |
-| 2 | Mail-Zugangsdaten (`MAIL_*`), Absender einkauf@polycare.de ✅ | Vercel → Environment Variables |
+| 2 | Mail-Zugangsdaten (`MAIL_*`) der eigenen Entra-App „Polycare Einkauf Mailversand“, Absender einkauf@polycare.de ✅ | Vercel → Environment Variables |
 | 3 | `ANTHROPIC_API_KEY` ✅ | Vercel → Environment Variables |
 | 5 | Zugang zum Agicap-MCP (als Connector in Claude) | claude.ai → Connectors |
 | Start | Budgetplan und Key Results Q4 2026 | in der App unter Planung |
