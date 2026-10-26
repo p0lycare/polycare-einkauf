@@ -50,6 +50,20 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 
 Niemand gibt die eigene Anforderung frei: Fordert eine Teamleitung selbst an, entscheidet die GF.
 
+## E-Mail-Versand
+
+Mails gehen über Microsoft Graph aus **einkauf@polycare.de** (`src/lib/mail`).
+
+- Eigene Entra-App **„Polycare Einkauf Mailversand“** (Anwendungs-ID `fa14555e-…`), Zugangsdaten als
+  `MAIL_*` in Vercel. In Entra unter API-Berechtigungen **kein** Mail.Send eintragen – sonst dürfte die
+  App aus jedem Postfach senden.
+- Das Senderecht kommt aus Exchange Online (RBAC for Applications): Rolle `Application Mail.Send` mit dem
+  Scope „Polycare Mailversand“ (`PrimarySmtpAddress -eq 'einkauf@polycare.de'`). In Exchange heißt der
+  Service Principal „Polycare Mailversand“.
+- Prüfen: `Test-ServicePrincipalAuthorization -Identity <AppId> -Resource einkauf@polycare.de` → `InScope: True`,
+  für jedes andere Postfach `False`. In der App: Verwaltung → „Testmail an mich senden“.
+- Die Reisekosten-App hat ihre eigene Entra-App mit eigenen Scopes; beide teilen keine Zugangsdaten.
+
 ## Lokal starten
 
 ```bash
