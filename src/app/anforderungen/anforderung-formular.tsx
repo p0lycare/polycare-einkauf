@@ -13,7 +13,7 @@ import { AngebotBereich, type VorhandeneDatei } from "./angebot-bereich";
 
 export type FormularDaten = {
   perioden: { id: string; name: string }[];
-  teams: { id: string; name: string; leitung_id: string | null }[];
+  teams: { id: string; name: string; leitung_id: string | null; nur_mitglieder: boolean }[];
   posten: {
     id: string;
     periode_id: string;
@@ -70,7 +70,9 @@ export function AnforderungFormular({
 }) {
   const [status, absenden, laeuft] = useActionState<FormularStatus, FormData>(anforderungSpeichern, {});
   const [periodeId, setPeriodeId] = useState(werte?.periode_id ?? daten.perioden[0]?.id ?? "");
-  const [teamId, setTeamId] = useState(werte?.team_id ?? eigenesTeam ?? daten.teams[0]?.id ?? "");
+  // Teams mit „Nur Mitglieder dürfen anfordern“ nur für ihre Mitglieder (die Datenbank prüft das ebenfalls)
+  const waehlbareTeams = daten.teams.filter((t) => !t.nur_mitglieder || t.id === eigenesTeam || t.id === werte?.team_id);
+  const [teamId, setTeamId] = useState(werte?.team_id ?? eigenesTeam ?? waehlbareTeams[0]?.id ?? "");
   const [postenId, setPostenId] = useState(werte?.budgetposten_id ?? "");
   const [keyResultId, setKeyResultId] = useState(werte?.key_result_id ?? "");
   const [betrag, setBetrag] = useState(werte ? centAlsEingabe(werte.betrag_cent) : "");
@@ -164,7 +166,7 @@ export function AnforderungFormular({
         )}
         <Feld label="Team">
           <select name="team_id" value={teamId} onChange={(e) => { setTeamId(e.target.value); setPostenId(""); setKeyResultId(""); }} className={feld}>
-            {daten.teams.map((t) => (
+            {waehlbareTeams.map((t) => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>

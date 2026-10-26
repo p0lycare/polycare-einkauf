@@ -6,7 +6,7 @@ import type { FormularDaten } from "./anforderung-formular";
 export async function ladeFormularDaten(supabase: SupabaseClient<Database>): Promise<FormularDaten> {
   const [{ data: perioden }, { data: teams }, { data: keyResults }, { data: einstellungen }] = await Promise.all([
     supabase.from("periode").select("id, name").eq("status", "aktiv").order("beginn"),
-    supabase.from("team").select("id, name, leitung_id").order("name"),
+    supabase.from("team").select("id, name, leitung_id, nur_mitglieder").order("name"),
     supabase.from("key_result").select("id, periode_id, team_id, kuerzel, titel").order("kuerzel"),
     supabase.from("einstellungen").select("gf_grenze_cent").single(),
   ]);

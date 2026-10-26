@@ -17,7 +17,7 @@ export default async function Verwaltung() {
 
   const [{ data: personen }, { data: teams }, { data: einstellungen }, { data: mails }] = await Promise.all([
     supabase.from("profile").select("id, name, email, team_id, ist_gf, ist_einkauf, ist_finanzen, ist_admin").order("name"),
-    supabase.from("team").select("id, name, leitung_id").order("name"),
+    supabase.from("team").select("id, name, leitung_id, nur_mitglieder").order("name"),
     supabase.from("einstellungen").select("gf_grenze_cent").single(),
     supabase.from("mail_protokoll").select("id, zeit, anlass, an, betreff, status, fehler").order("zeit", { ascending: false }).limit(20),
   ]);
@@ -30,7 +30,10 @@ export default async function Verwaltung() {
 
       <section className={karte}>
         <h2 className="font-medium">Teams und Teamleitungen</h2>
-        <p className="mt-1 text-sm text-neutral-500">Die Teamleitung gibt Anforderungen ihres Teams frei und plant dessen Budget.</p>
+        <p className="mt-1 text-sm text-neutral-500">
+          Die Teamleitung gibt Anforderungen ihres Teams frei und plant dessen Budget. Ohne Teamleitung gehen Anforderungen
+          direkt an die Geschäftsführung. „Nur Mitglieder fordern an“: Nur Personen aus dem Team können es im Formular wählen.
+        </p>
         <div className="divide-y divide-neutral-100 dark:divide-neutral-900">
           {(teams ?? []).map((t) => (
             <TeamZeile key={t.id} team={t} personen={auswahl} />

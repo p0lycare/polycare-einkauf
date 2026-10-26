@@ -140,7 +140,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Teams",
-          text: "Teams anlegen und je Team eine Teamleitung festlegen. Die Teamleitung gibt frei und plant das Budget.",
+          text: "Teams anlegen und je Team eine Teamleitung festlegen. Die Teamleitung gibt frei und plant das Budget. Ohne Teamleitung gehen Anforderungen direkt an die Geschäftsführung. Mit „Nur Mitglieder fordern an“ (z. B. beim Team Geschäftsführung) können nur Personen aus dem Team dafür anfordern.",
         },
         {
           titel: "Einstellungen und Mail",

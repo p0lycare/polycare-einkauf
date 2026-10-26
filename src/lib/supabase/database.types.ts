@@ -473,6 +473,7 @@ export type Database = {
           id: string;
           leitung_id: string | null;
           name: string;
+          nur_mitglieder: boolean;
         };
         ComputedFields: never;
         Insert: {
@@ -480,12 +481,14 @@ export type Database = {
           id?: string;
           leitung_id?: string | null;
           name: string;
+          nur_mitglieder?: boolean;
         };
         Update: {
           created_at?: string;
           id?: string;
           leitung_id?: string | null;
           name?: string;
+          nur_mitglieder?: boolean;
         };
         Relationships: [
           {
@@ -575,6 +578,7 @@ export type Database = {
       };
       darf_anforderung_sehen: { Args: { p_ersteller: string; p_team: string }; Returns: boolean };
       darf_angebot_sehen: { Args: { p_pfad: string }; Returns: boolean };
+      darf_fuer_team_anfordern: { Args: { p_team: string }; Returns: boolean };
       darf_freigeben: {
         Args: {
           a: Omit<

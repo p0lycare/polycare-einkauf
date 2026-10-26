@@ -54,6 +54,9 @@ export async function anforderungSpeichern(_vorher: FormularStatus, formData: Fo
         .single();
 
   if (error || !data) {
+    if (error?.message.includes("row-level security")) {
+      return { fehler: "Für dieses Team dürfen nur seine Mitglieder anfordern." };
+    }
     if (error?.message.includes("foreign key")) {
       return { fehler: "Budgetposten oder Key Result passen nicht zu Team und Periode." };
     }
