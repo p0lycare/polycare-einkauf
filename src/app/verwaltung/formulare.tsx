@@ -63,10 +63,16 @@ export function PersonZeile({ person, teams }: { person: Person; teams: Auswahl[
   );
 }
 
-export function TeamZeile({ team, personen }: { team?: { id: string; name: string; leitung_id: string | null }; personen: Auswahl[] }) {
+export function TeamZeile({
+  team,
+  personen,
+}: {
+  team?: { id: string; name: string; leitung_id: string | null; nur_mitglieder: boolean };
+  personen: Auswahl[];
+}) {
   const [status, absenden, laeuft] = useActionState(teamSpeichern, {});
   return (
-    <form onSubmit={ohneZuruecksetzen(absenden)} className="grid gap-2 py-3 sm:grid-cols-[1fr_14rem_auto] sm:items-center">
+    <form onSubmit={ohneZuruecksetzen(absenden)} className="grid gap-2 py-3 sm:grid-cols-[1fr_14rem_auto_auto] sm:items-center">
       {team && <input type="hidden" name="id" value={team.id} />}
       <input name="name" defaultValue={team?.name} placeholder="Neues Team" aria-label="Teamname" className={feldKlein} />
       <select name="leitung_id" defaultValue={team?.leitung_id ?? ""} aria-label="Teamleitung" className={feldKlein}>
@@ -75,6 +81,10 @@ export function TeamZeile({ team, personen }: { team?: { id: string; name: strin
           <option key={p.id} value={p.id}>{p.name}</option>
         ))}
       </select>
+      <label className="flex items-center gap-2 text-sm" title="Nur Personen aus diesem Team können Anforderungen dafür stellen">
+        <input type="checkbox" name="nur_mitglieder" defaultChecked={team?.nur_mitglieder} />
+        Nur Mitglieder fordern an
+      </label>
       <div className="flex items-center gap-3">
         <button type="submit" disabled={laeuft} className={knopfKlein}>{laeuft ? "…" : team ? "Speichern" : "Anlegen"}</button>
         <Rueckmeldung status={status} />

@@ -50,6 +50,10 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 
 Niemand gibt die eigene Anforderung frei: Fordert eine Teamleitung selbst an, entscheidet die GF.
 
+Teams ohne Teamleitung (z. B. „Geschäftsführung“) schicken Anforderungen direkt an die GF. Ist am Team
+„Nur Mitglieder fordern an“ gesetzt, dürfen nur Personen aus dem Team dafür anfordern – die Datenbank prüft das
+(`darf_fuer_team_anfordern`, Migration 0005).
+
 ## E-Mail-Versand
 
 Mails gehen über Microsoft Graph aus **einkauf@polycare.de** (`src/lib/mail`).

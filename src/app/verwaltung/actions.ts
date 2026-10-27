@@ -36,7 +36,11 @@ export async function teamSpeichern(_vorher: Status, formData: FormData): Promis
   const id = text(formData, "id");
   const name = text(formData, "name");
   if (!name) return { fehler: "Bitte einen Namen angeben." };
-  const daten = { name, leitung_id: text(formData, "leitung_id") || null };
+  const daten = {
+    name,
+    leitung_id: text(formData, "leitung_id") || null,
+    nur_mitglieder: formData.get("nur_mitglieder") === "on",
+  };
   const supabase = await createClient();
   const { error } = id
     ? await supabase.from("team").update(daten).eq("id", id)
