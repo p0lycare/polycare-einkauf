@@ -22,8 +22,8 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
   - „Vorperiode kopieren“ (Budgetposten und Key Results als Vorlage)
   - Übersicht für die GF: alle Teams, Summen, offene Freigaben
   - Hinweis auf gestückelte Anforderungen (mehrere knapp unter 1.000 € beim selben Lieferanten)
-- [ ] **5. Agicap: Bestandsaufnahme** – welche Tools der MCP-Server anbietet, lesen/schreiben,
-      Entscheidung über die Anbindung (gebaut wird nach dem Start) – *Connector eingerichtet (nur Lesen), Bestandsaufnahme folgt*
+- [x] **5. Agicap: Bestandsaufnahme** – welche Tools der MCP-Server anbietet, lesen/schreiben,
+      Entscheidung über die Anbindung (gebaut wird nach dem Start): [docs/agicap.md](agicap.md)
 - [x] **6. Feinschliff**
   - [x] Hilfe-Seite: Einführung je Rolle (`/hilfe`)
   - [x] Erscheinungsbild wie die Reisekosten-App
@@ -52,5 +52,5 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 | 1 | ~~Supabase Access Token~~ (nicht mehr nötig), Datenbank-Passwort ✅ | GitHub → Settings → Secrets |
 | 2 | Mail-Zugangsdaten (`MAIL_*`) der eigenen Entra-App „Polycare Einkauf Mailversand“, Absender einkauf@polycare.de ✅ | Vercel → Environment Variables |
 | 3 | `ANTHROPIC_API_KEY` ✅ | Vercel → Environment Variables |
-| 5 | Zugang zum Agicap-MCP (als Connector in Claude) | claude.ai → Connectors |
+| 5 | ~~Zugang zum Agicap-MCP (als Connector in Claude)~~ ✅ nur Lesen; später technischer Zugang für die App, siehe [agicap.md](agicap.md) | claude.ai → Connectors |
 | Start | OKR-Zyklus 26Z3 übernehmen (`OKR_API_KEY` in Vercel), Budgetposten prüfen, Periode aktiv setzen | in der App unter Planung |
