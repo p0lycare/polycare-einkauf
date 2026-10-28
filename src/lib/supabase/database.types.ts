@@ -309,6 +309,10 @@ export type Database = {
           periode_id: string;
           team_id: string | null;
           titel: string;
+          okr_budget_vorschlag_cent: number | null;
+          okr_entfallen: boolean;
+          okr_id: string | null;
+          okr_top_kr: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -317,6 +321,10 @@ export type Database = {
           periode_id: string;
           team_id?: string | null;
           titel: string;
+          okr_budget_vorschlag_cent?: number | null;
+          okr_entfallen?: boolean;
+          okr_id?: string | null;
+          okr_top_kr?: string | null;
         };
         Update: {
           id?: string;
@@ -324,6 +332,10 @@ export type Database = {
           periode_id?: string;
           team_id?: string | null;
           titel?: string;
+          okr_budget_vorschlag_cent?: number | null;
+          okr_entfallen?: boolean;
+          okr_id?: string | null;
+          okr_top_kr?: string | null;
         };
         Relationships: [
           {
@@ -402,6 +414,8 @@ export type Database = {
           id: string;
           name: string;
           status: Database["public"]["Enums"]["periode_status"];
+          okr_version: number | null;
+          okr_zyklus: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -411,6 +425,8 @@ export type Database = {
           id?: string;
           name: string;
           status?: Database["public"]["Enums"]["periode_status"];
+          okr_version?: number | null;
+          okr_zyklus?: string | null;
         };
         Update: {
           beginn?: string;
@@ -419,6 +435,8 @@ export type Database = {
           id?: string;
           name?: string;
           status?: Database["public"]["Enums"]["periode_status"];
+          okr_version?: number | null;
+          okr_zyklus?: string | null;
         };
         Relationships: [];
       };
@@ -622,6 +640,7 @@ export type Database = {
         Returns: undefined;
       };
       name_aus_metadaten: { Args: { email: string; meta: Json }; Returns: string };
+      okr_uebernehmen: { Args: { p_set: Json }; Returns: Json };
       periode_kopieren: {
         Args: { p_quelle: string; p_ziel: string };
         Returns: { kopierte_key_results: number; kopierte_posten: number }[];

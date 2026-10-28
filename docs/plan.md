@@ -53,4 +53,4 @@ Bis dahin bauen wir, was ohne sie geht. Stand wird hier abgehakt.
 | 2 | Mail-Zugangsdaten (`MAIL_*`) der eigenen Entra-App „Polycare Einkauf Mailversand“, Absender einkauf@polycare.de ✅ | Vercel → Environment Variables |
 | 3 | `ANTHROPIC_API_KEY` ✅ | Vercel → Environment Variables |
 | 5 | Zugang zum Agicap-MCP (als Connector in Claude) | claude.ai → Connectors |
-| Start | Budgetplan und Key Results Q4 2026 | in der App unter Planung |
+| Start | OKR-Zyklus 26Z3 übernehmen (`OKR_API_KEY` in Vercel), Budgetposten prüfen, Periode aktiv setzen | in der App unter Planung |

@@ -1,7 +1,7 @@
 # Polycare Einkauf
 
 Interne Web-App für Bestellanforderungen bei Polycare: Mitarbeitende fordern Produkte und Leistungen
-an, jede Anforderung läuft gegen das Quartalsbudget ihres Teams (optional mit Bezug zu einem Key
+an, jede Anforderung läuft gegen das Budget ihres Teams im OKR-Zyklus (optional mit Bezug zu einem Key
 Result). Die Teamleitung gibt frei, über 1.000 € brutto und bei außerplanmäßigen Anforderungen
 zusätzlich die Geschäftsführung, danach bestellt der Einkauf.
 
@@ -33,7 +33,8 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Übersicht für GF und Finanzen | ✅ `/uebersicht`: Teams, offene Freigaben, Stückelung, außerplanmäßig |
 | Auswertung je Key Result | ✅ `/uebersicht/key-results`, CSV-Export für Finanzen |
 | Hinweis auf gestückelte Anforderungen | ✅ `src/lib/einkauf/stueckelung.ts`, an der Anforderung und in der Übersicht |
-| Vom OKR zur Bestellung (Zusammenspiel mit dem OKR-Dashboard) | ✅ `/hilfe/okr` – Umsetzung der Schnittstelle offen |
+| Vom OKR zur Bestellung (Zusammenspiel mit dem OKR-Dashboard) | ✅ `/hilfe/okr` |
+| Übernahme aus dem OKR-Dashboard | ✅ Planung → „Aus OKR-Dashboard übernehmen“, `src/lib/okr`, Migration 0007; braucht `OKR_API_KEY` |
 | Einführung je Rolle | ✅ `/hilfe`, Texte in `src/lib/hilfe/einfuehrung.ts` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |

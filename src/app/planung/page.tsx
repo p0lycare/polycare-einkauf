@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ladeIch, plant } from "@/lib/einkauf/ich";
 import { formatDatum, formatEuro } from "@/lib/format";
+import { okrKonfiguriert } from "@/lib/okr/abruf";
+import { zyklusFuerDatum } from "@/lib/okr/okr-set";
 import { karte } from "@/lib/stil";
-import { KeyResultKopf, KeyResultZeile, PeriodeKopieren, PeriodenKopf, PeriodeZeile, PostenKopf, PostenZeile, STATUS_TEXT } from "./formulare";
+import { KeyResultKopf, KeyResultZeile, OkrUebernahme, PeriodeKopieren, PeriodenKopf, PeriodeZeile, PostenKopf, PostenZeile, STATUS_TEXT } from "./formulare";
 
 export default async function Planung({ searchParams }: { searchParams: Promise<{ periode?: string }> }) {
   const { periode: gewuenscht } = await searchParams;
@@ -25,7 +27,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
 
   const [{ data: keyResults }, { data: posten }] = periode
     ? await Promise.all([
-        supabase.from("key_result").select("id, kuerzel, titel, team_id").eq("periode_id", periode.id).order("kuerzel"),
+        supabase.from("key_result").select("id, kuerzel, titel, team_id, okr_id, okr_entfallen").eq("periode_id", periode.id).order("kuerzel"),
         supabase.from("budgetposten").select("id, team_id, name, geplant_cent, key_result_id").eq("periode_id", periode.id).order("name"),
       ])
     : [{ data: [] }, { data: [] }];
@@ -42,6 +44,27 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 p-6 font-sans">
       <h1 className="text-xl font-semibold">Planung</h1>
+
+      {finanzen && (
+        <section className={karte}>
+          <h2 className="font-medium">Aus OKR-Dashboard übernehmen</h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            Holt das eingefrorene OKR-Set eines Zyklus: legt die Periode an, übernimmt die Team-KRs und belegt Budgetposten
+            mit den Budgetvorschlägen vor. Bei einer neuen OKR-Version zeigt die Vorschau, was sich ändert.{" "}
+            <Link href="/hilfe/okr" className="underline">
+              Wie das zusammenspielt
+            </Link>
+          </p>
+          {okrKonfiguriert() ? (
+            <OkrUebernahme vorschlag={zyklusFuerDatum(new Date())} />
+          ) : (
+            <p className="mt-3 rounded-md bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+              Die Verbindung ist noch nicht eingerichtet: Im OKR-Dashboard unter Verwaltung → Zugänge für andere Apps einen
+              Schlüssel erzeugen und hier in Vercel als <code>OKR_API_KEY</code> hinterlegen.
+            </p>
+          )}
+        </section>
+      )}
 
       <section className={karte}>
         <h2 className="font-medium">Perioden</h2>

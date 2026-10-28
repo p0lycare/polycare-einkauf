@@ -11,7 +11,7 @@ Hallo zusammen,
 ab heute laufen alle Bestellanforderungen über unsere neue **Einkaufs-App**:
 👉 https://polycare-einkauf.vercel.app
 
-**Warum?** Statt Mails und Zurufen gibt es einen festen Weg: Anforderung anlegen, freigeben lassen, der Einkauf bestellt. Alle sehen jederzeit, wo ihre Anforderung steht, und jedes Team sieht sein Budget für das Quartal.
+**Warum?** Statt Mails und Zurufen gibt es einen festen Weg: Anforderung anlegen, freigeben lassen, der Einkauf bestellt. Alle sehen jederzeit, wo ihre Anforderung steht, und jedes Team sieht sein Budget für den aktuellen OKR-Zyklus.
 
 **So geht's los**
 
