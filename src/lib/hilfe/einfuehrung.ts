@@ -114,11 +114,11 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
       schritte: [
         {
           titel: "Perioden",
-          text: "Unter „Planung“ eine Periode anlegen, z. B. „Q1 2027“. In Planung: Teamleitungen pflegen ihr Budget. Aktiv: Anforderungen sind möglich. Abgeschlossen: Restbudget verfällt.",
+          text: "Unter „Planung“ mit „Aus OKR-Dashboard übernehmen“ den OKR-Zyklus holen (z. B. „26Z3“) – das legt die Periode, die Key Results und vorbelegte Budgetposten an. Von Hand angelegte Perioden heißen ebenso nach dem Zyklus. In Planung: Teamleitungen pflegen ihr Budget. Aktiv: Anforderungen sind möglich. Abgeschlossen: Restbudget verfällt.",
         },
         {
           titel: "Vorperiode kopieren",
-          text: "Für eine neue Periode in Planung lassen sich Key Results und Budgetposten einer früheren Periode als Vorlage übernehmen. Danach die Beträge anpassen.",
+          text: "Ohne OKR-Übernahme lassen sich für eine neue Periode in Planung Key Results und Budgetposten einer früheren Periode als Vorlage übernehmen. Danach die Beträge anpassen.",
         },
         {
           titel: "Key Results und Budgets",

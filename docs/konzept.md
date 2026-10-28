@@ -1,7 +1,7 @@
 # Polycare Einkauf – Konzept
 
 Interne Web-App, über die Mitarbeitende Produkte und Leistungen anfordern. Jede Anforderung läuft
-gegen das Quartalsbudget ihres Teams und, wo es passt, gegen ein Key Result. Nach der Freigabe
+gegen das Budget ihres Teams im OKR-Zyklus und, wo es passt, gegen ein Key Result. Nach der Freigabe
 bestellt der Einkauf.
 
 ## Ziele
@@ -19,7 +19,7 @@ bestellt der Einkauf.
 
 | Begriff | Bedeutung |
 | --- | --- |
-| **Periode** | OKR-Zeitraum, in der Regel 3 Monate (z. B. „Q1 2027“). Budget verfällt am Periodenende. |
+| **Periode** | OKR-Zyklus von 4 Monaten (z. B. „26Z3“ = September–Dezember), übernommen aus dem OKR-Dashboard. Budget verfällt am Periodenende. |
 | **Team** | Material, Produktion, Bausysteme. Erweiterbar. |
 | **Budgetposten** | Unterteilung des Teambudgets in einer Periode, z. B. „Laborbedarf“, „Externe Prüfungen“. Optional mit einem Key Result verknüpft. |
 | **Key Result** | Aus der OKR-Planung der Periode. Dient als Bezug für Budgetposten und Anforderungen. |
@@ -32,7 +32,7 @@ Alle Beträge – Planung, Anforderungen, Freigabegrenzen – sind **brutto**.
 
 Pro Budgetposten zeigt die App:
 
-- **Geplant:** Betrag aus der Quartalsplanung.
+- **Geplant:** Betrag aus der Planung des Zyklus.
 - **Gebunden:** Summe der freigegebenen, noch nicht abgerechneten Anforderungen bzw. Bestellungen.
 - **Ausgegeben:** Summe der eingegangenen Rechnungen.
 - **Verfügbar** = Geplant − Gebunden − Ausgegeben.
@@ -68,7 +68,7 @@ Entwurf → Eingereicht → [Teamleitung] → [GF, falls > 1.000 € oder außer
 - Bei jedem Statuswechsel gibt es eine Benachrichtigung per Microsoft 365 (wie in der Reisekosten-App).
 - Jeder Schritt wird im Verlauf protokolliert: wer, wann, Kommentar.
 
-## Quartalsplanung in der App
+## Planung je Zyklus in der App
 
 1. Finanzen legt die neue Periode an. Die Key Results werden importiert oder erfasst.
 2. Jede Teamleitung plant die Budgetposten ihres Teams. Die Vorperiode kann als Vorlage kopiert
@@ -124,7 +124,7 @@ Microsoft-Firmenkonto.
 - Wareneingang und Rechnungserfassung → Ist-Werte („ausgegeben“)
 - Angebot und Rechnung per KI auslesen
 - Lieferantenstamm, Bündeln mehrerer Anforderungen zu einer Bestellung
-- Quartalsplanung in der App inkl. Kopie der Vorperiode
+- Planung je Zyklus in der App inkl. Kopie der Vorperiode
 - Agicap über MCP: Budgetabgleich lesen
 
 **Stufe 3**

@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Polycare Einkauf",
-  description: "Bestellanforderungen gegen das Quartalsbudget, Freigabe und Bestellung",
+  description: "Bestellanforderungen gegen das Budget des OKR-Zyklus, Freigabe und Bestellung",
 };
 
 export default async function RootLayout({

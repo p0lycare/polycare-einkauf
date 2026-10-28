@@ -84,7 +84,7 @@ const SCHNITTSTELLE: Endpunkt[] = [
     inhalt: "Eingefrorenes OKR-Set: Zyklus (Kürzel, Beginn, Ende), Version, Key Results mit ID, Kürzel, Titel, Team, Lead, Budgetvorschlag in Cent (brutto)",
     zugang: "Schlüssel OKR_API_KEY – erzeugt im OKR-Dashboard unter Verwaltung → Zugänge für andere Apps, hinterlegt in Vercel (Einkauf)",
     wann: "Beim Übernehmen eines Zyklus und wenn es eine neue Version gibt",
-    stand: "im OKR-Dashboard fertig",
+    stand: "fertig",
   },
   {
     richtung: "Einkauf → OKR-Dashboard",
@@ -99,10 +99,10 @@ const SCHNITTSTELLE: Endpunkt[] = [
 const STAND: { was: string; wo: string; fertig: boolean }[] = [
   { was: "Eingefrorenes OKR-Set abrufbar", wo: "OKR-Dashboard", fertig: true },
   { was: "Auswertung je Key Result mit CSV-Export", wo: "Einkauf", fertig: true },
-  { was: "Perioden als Zyklen (26Z1–26Z3) statt Quartale", wo: "Einkauf", fertig: false },
-  { was: "„Aus OKR-Dashboard übernehmen“ unter Planung, mit OKR-ID je Key Result", wo: "Einkauf", fertig: false },
-  { was: "Budgetvorschläge als vorbelegte Budgetposten", wo: "Einkauf", fertig: false },
-  { was: "Unterschiede bei neuer OKR-Version, Bestätigung durch Finanzen", wo: "Einkauf", fertig: false },
+  { was: "Perioden als Zyklen (26Z1–26Z3) statt Quartale", wo: "Einkauf", fertig: true },
+  { was: "„Aus OKR-Dashboard übernehmen“ unter Planung, mit OKR-ID je Key Result", wo: "Einkauf", fertig: true },
+  { was: "Budgetvorschläge als vorbelegte Budgetposten", wo: "Einkauf", fertig: true },
+  { was: "Unterschiede bei neuer OKR-Version, Bestätigung durch Finanzen", wo: "Einkauf", fertig: true },
   { was: "Budget-Ist je KR für das OKR-Dashboard bereitstellen", wo: "Einkauf", fertig: false },
   { was: "Budget-Ist in der Frozen-Ansicht anzeigen", wo: "OKR-Dashboard", fertig: false },
 ];
