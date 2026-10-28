@@ -46,6 +46,18 @@ describe("stueckelungZu", () => {
     expect(stueckelungZu(a, [anderesTeam, zuAlt, ueberGrenze], GRENZE)).toBeNull();
   });
 
+  it("nimmt wie die Übersicht nur ein 30-Tage-Fenster, nicht ±30 Tage", () => {
+    const a = anf("Müller", 40000, "15");
+    const frueh = { ...anf("Müller", 40000, "01"), eingereicht_am: "2026-09-20T10:00:00Z" };
+    const spaet = { ...anf("Müller", 30000, "01"), eingereicht_am: "2026-11-10T10:00:00Z" };
+    const ergebnis = stueckelungZu(a, [frueh, spaet], GRENZE);
+    // frueh und spaet liegen 51 Tage auseinander und passen nicht in ein Fenster
+    expect(ergebnis).toBeNull();
+    const dazu = stueckelungZu(a, [frueh, spaet, anf("Müller", 30000, "05")], GRENZE);
+    expect(dazu?.treffer.map((k) => k.id)).toEqual([frueh.id, `a${nr}`]);
+    expect(dazu?.summeCent).toBe(110000);
+  });
+
   it("ohne Lieferant oder selbst über der Grenze kein Hinweis", () => {
     expect(stueckelungZu(anf(null, 95000, "20"), [anf(null, 95000, "19")], GRENZE)).toBeNull();
     expect(stueckelungZu(anf("Müller", 120000, "20"), [anf("Müller", 95000, "19")], GRENZE)).toBeNull();

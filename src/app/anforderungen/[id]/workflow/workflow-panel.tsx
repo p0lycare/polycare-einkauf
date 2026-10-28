@@ -24,21 +24,27 @@ function Einfach({
   id,
   aktion,
   text,
+  laeuftText,
   sekundaer,
+  frage,
 }: {
   id: string;
   aktion: typeof einreichen;
   text: string;
+  laeuftText: string;
   sekundaer?: boolean;
+  /** Rückfrage vor dem Absenden */
+  frage?: string;
 }) {
   const [status, absenden, laeuft] = useActionState(aktion, {});
+  const senden = ohneZuruecksetzen(absenden);
   return (
-    <form onSubmit={ohneZuruecksetzen(absenden)} className="flex flex-col gap-3">
+    <form onSubmit={(e) => (frage && !confirm(frage) ? e.preventDefault() : senden(e))} className="flex flex-col gap-3">
       <input type="hidden" name="id" value={id} />
       <Fehler status={status} />
       <div>
         <button type="submit" disabled={laeuft} className={sekundaer ? knopfSekundaer : knopf}>
-          {laeuft ? "…" : text}
+          {laeuft ? laeuftText : text}
         </button>
       </div>
     </form>
@@ -57,7 +63,7 @@ function Ablehnen({ id, onAbbrechen }: { id: string; onAbbrechen: () => void }) 
       <Fehler status={status} />
       <div className="flex gap-3">
         <button type="submit" disabled={laeuft} className={knopf}>
-          {laeuft ? "…" : "Ablehnen"}
+          {laeuft ? "Wird abgelehnt …" : "Ablehnen"}
         </button>
         <button type="button" onClick={onAbbrechen} className={knopfSekundaer}>
           Abbrechen
@@ -81,7 +87,7 @@ function Freigeben({ id }: { id: string }) {
       <Fehler status={status} />
       <div className="flex gap-3">
         <button type="submit" disabled={laeuft} className={knopf}>
-          {laeuft ? "…" : "Freigeben"}
+          {laeuft ? "Wird freigegeben …" : "Freigeben"}
         </button>
         <button type="button" onClick={() => setAblehnung(true)} className={knopfSekundaer}>
           Ablehnen …
@@ -103,21 +109,45 @@ function Bestellen({ id }: { id: string }) {
       <Fehler status={status} />
       <div>
         <button type="submit" disabled={laeuft} className={knopf}>
-          {laeuft ? "…" : "Als bestellt markieren"}
+          {laeuft ? "Wird gespeichert …" : "Als bestellt markieren"}
         </button>
       </div>
     </form>
   );
 }
 
-export function WorkflowPanel({ id, rechte, titel }: { id: string; rechte: WorkflowRechte; titel: string }) {
+export function WorkflowPanel({
+  id,
+  rechte,
+  titel,
+  hinweis,
+  zurueckziehenFrage,
+}: {
+  id: string;
+  rechte: WorkflowRechte;
+  titel: string;
+  hinweis?: string;
+  zurueckziehenFrage?: string;
+}) {
   if (!Object.values(rechte).some(Boolean)) return null;
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border-2 border-neutral-900 p-4 dark:border-neutral-100">
-      <h2 className="font-medium">{titel}</h2>
-      {rechte.einreichen && <Einfach id={id} aktion={einreichen} text="Zur Freigabe einreichen" />}
-      {rechte.zurueckziehen && <Einfach id={id} aktion={zurueckziehen} text="Zurückziehen und bearbeiten" sekundaer />}
+    <section className="flex flex-col gap-4 rounded-lg border-2 border-primaer p-4">
+      <div>
+        <h2 className="font-medium">{titel}</h2>
+        {hinweis && <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{hinweis}</p>}
+      </div>
+      {rechte.einreichen && <Einfach id={id} aktion={einreichen} text="Zur Freigabe einreichen" laeuftText="Wird eingereicht …" />}
+      {rechte.zurueckziehen && (
+        <Einfach
+          id={id}
+          aktion={zurueckziehen}
+          text="Zurückziehen und bearbeiten"
+          laeuftText="Wird zurückgezogen …"
+          sekundaer
+          frage={zurueckziehenFrage}
+        />
+      )}
       {rechte.freigeben && <Freigeben id={id} />}
       {rechte.bestellen && <Bestellen id={id} />}
     </section>

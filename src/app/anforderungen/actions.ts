@@ -23,6 +23,9 @@ export async function anforderungSpeichern(_vorher: FormularStatus, formData: Fo
   if (!titel) return { fehler: "Bitte angeben, was bestellt werden soll." };
   if (!periodeId || !teamId) return { fehler: "Bitte Periode und Team auswählen." };
   if (!betrag) return { fehler: "Bitte den Betrag brutto angeben, z. B. 249,90." };
+  if (betrag > 1_000_000_00) return { fehler: "Der Betrag ist zu hoch – bitte prüfen (höchstens 1.000.000 €)." };
+  const gewuenschtBis = text(formData, "gewuenscht_bis");
+  if (gewuenschtBis && !/^\d{4}-\d{2}-\d{2}$/.test(gewuenschtBis)) return { fehler: "Bitte ein gültiges Datum bei „Gewünscht bis“ angeben." };
   if (link && !/^https?:\/\//i.test(link)) return { fehler: "Der Link muss mit http:// oder https:// beginnen." };
 
   const supabase = await createClient();
@@ -60,7 +63,10 @@ export async function anforderungSpeichern(_vorher: FormularStatus, formData: Fo
     if (error?.message.includes("foreign key")) {
       return { fehler: "Budgetposten oder Key Result passen nicht zu Team und Periode." };
     }
-    return { fehler: "Speichern fehlgeschlagen. Ist die Anforderung noch im Entwurf?" };
+    return {
+      fehler:
+        "Speichern hat nicht geklappt. Eingereichte Anforderungen lassen sich nur nach dem Zurückziehen ändern; sonst bitte noch einmal versuchen und bei Wiederholung der Verwaltung Bescheid geben.",
+    };
   }
 
   // Die Anforderung ist gespeichert; schlägt das Anhängen fehl, zeigt die Detailseite einen Hinweis

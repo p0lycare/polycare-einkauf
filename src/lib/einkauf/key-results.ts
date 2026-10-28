@@ -100,7 +100,7 @@ export function centAlsCsv(cent: number): string {
 
 function feld(wert: string): string {
   // Anführungszeichen nur wenn nötig; führende =,+,-,@ entschärfen (Formel-Injection in Excel)
-  const sicher = /^[=+\-@]/.test(wert) ? `'${wert}` : wert;
+  const sicher = /^[=+\-@\t\r]/.test(wert) ? `'${wert}` : wert;
   return /[;"\n\r]/.test(sicher) ? `"${sicher.replace(/"/g, '""')}"` : sicher;
 }
 

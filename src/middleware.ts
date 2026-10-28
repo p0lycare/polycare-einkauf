@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return response;
+  if (!url || !key) return new NextResponse("Supabase ist nicht konfiguriert", { status: 500 });
 
   const supabase = createServerClient(url, key, {
     cookies: {

@@ -15,7 +15,7 @@ function Rueckmeldung({ status }: { status: Status }) {
 }
 
 const ROLLEN = [
-  ["ist_gf", "GF"],
+  ["ist_gf", "Geschäftsführung"],
   ["ist_einkauf", "Einkauf"],
   ["ist_finanzen", "Finanzen"],
   ["ist_admin", "Admin"],
@@ -98,7 +98,7 @@ export function EinstellungenFormular({ gfGrenzeCent }: { gfGrenzeCent: number }
   return (
     <form onSubmit={ohneZuruecksetzen(absenden)} className="flex flex-wrap items-end gap-3">
       <label className="flex flex-col gap-1">
-        <span className="text-sm">Freigabe durch die GF ab (brutto, über diesem Betrag)</span>
+        <span className="text-sm">Geschäftsführung gibt zusätzlich frei über (€, brutto)</span>
         <input name="gf_grenze" defaultValue={centAlsEingabe(gfGrenzeCent)} inputMode="decimal" className={`${feldKlein} w-40`} />
       </label>
       <button type="submit" disabled={laeuft} className={knopfKlein}>{laeuft ? "…" : "Speichern"}</button>

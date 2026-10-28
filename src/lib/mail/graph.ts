@@ -30,6 +30,7 @@ async function zugriffstoken(k: Konfiguration): Promise<string> {
   const antwort = await fetch(`https://login.microsoftonline.com/${k.tenantId}/oauth2/v2.0/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    signal: AbortSignal.timeout(10_000),
     body: new URLSearchParams({
       client_id: k.clientId,
       client_secret: k.clientSecret,
@@ -52,6 +53,7 @@ export async function sendeMail(mail: Mail): Promise<void> {
   const antwort = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(k.absender)}/sendMail`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    signal: AbortSignal.timeout(15_000),
     body: JSON.stringify({
       message: {
         subject: mail.betreff,

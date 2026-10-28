@@ -72,7 +72,8 @@ export function AnforderungFormular({
   const [periodeId, setPeriodeId] = useState(werte?.periode_id ?? daten.perioden[0]?.id ?? "");
   // Teams mit „Nur Mitglieder dürfen anfordern“ nur für ihre Mitglieder (die Datenbank prüft das ebenfalls)
   const waehlbareTeams = daten.teams.filter((t) => !t.nur_mitglieder || t.id === eigenesTeam || t.id === werte?.team_id);
-  const [teamId, setTeamId] = useState(werte?.team_id ?? eigenesTeam ?? waehlbareTeams[0]?.id ?? "");
+  // Ohne eigenes Team nicht still das erste Team vorbelegen – sonst landet die Anforderung im falschen Budget
+  const [teamId, setTeamId] = useState(werte?.team_id ?? eigenesTeam ?? "");
   const [postenId, setPostenId] = useState(werte?.budgetposten_id ?? "");
   const [keyResultId, setKeyResultId] = useState(werte?.key_result_id ?? "");
   const [betrag, setBetrag] = useState(werte ? centAlsEingabe(werte.betrag_cent) : "");
@@ -84,7 +85,10 @@ export function AnforderungFormular({
   if (!daten.perioden.length) {
     return (
       <p className="rounded-md bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-        Es gibt gerade keine aktive Budgetperiode. Bitte wende dich an Finanzen.
+        Es gibt gerade keine aktive Budgetperiode. Bitte wende dich an Finanzen.{" "}
+        <Link href="/" className="underline">
+          Zurück zu meinen Anforderungen
+        </Link>
       </p>
     );
   }
@@ -133,7 +137,7 @@ export function AnforderungFormular({
       </Feld>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Feld label="Betrag (brutto)">
+        <Feld label="Betrag in € (brutto)">
           <input name="betrag" required inputMode="decimal" value={betrag} onChange={(e) => setBetrag(e.target.value)} className={feld} placeholder="0,00" />
         </Feld>
         <Feld label="Gewünscht bis" hinweis="optional">
@@ -165,7 +169,8 @@ export function AnforderungFormular({
           <input type="hidden" name="periode_id" value={periodeId} />
         )}
         <Feld label="Team">
-          <select name="team_id" value={teamId} onChange={(e) => { setTeamId(e.target.value); setPostenId(""); setKeyResultId(""); }} className={feld}>
+          <select name="team_id" required value={teamId} onChange={(e) => { setTeamId(e.target.value); setPostenId(""); setKeyResultId(""); }} className={feld}>
+            {!teamId && <option value="">– Bitte Team wählen –</option>}
             {waehlbareTeams.map((t) => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
@@ -182,6 +187,12 @@ export function AnforderungFormular({
             ))}
           </select>
         </Feld>
+        {gewaehlt && betragCent !== null && betragCent > gewaehlt.verfuegbar_cent && (
+          <p role="note" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900 sm:col-span-2 dark:bg-amber-950 dark:text-amber-100">
+            Der Betrag liegt {formatEuro(betragCent - gewaehlt.verfuegbar_cent)} über dem verfügbaren Budget. Die Anforderung
+            wird außerplanmäßig – die Geschäftsführung entscheidet, bitte begründe sie unten.
+          </p>
+        )}
         <Feld label="Key Result" hinweis="optional">
           <select name="key_result_id" value={keyResultId} onChange={(e) => setKeyResultId(e.target.value)} className={feld}>
             <option value="">– keins –</option>
@@ -193,8 +204,8 @@ export function AnforderungFormular({
       </fieldset>
 
       <Feld
-        label="Begründung"
-        hinweis={weg?.ausserplanmaessig ? "Bei außerplanmäßigen Anforderungen bitte erklären, warum es nicht warten kann." : "optional"}
+        label={weg?.ausserplanmaessig ? "Begründung (Pflicht bei außerplanmäßig)" : "Begründung"}
+        hinweis={weg?.ausserplanmaessig ? "Bitte erklären, warum es nicht warten kann und nicht aus dem Budget geht." : "optional"}
       >
         <textarea name="begruendung" rows={2} required={weg?.ausserplanmaessig} defaultValue={werte?.begruendung ?? ""} className={feld} />
       </Feld>
@@ -212,9 +223,12 @@ export function AnforderungFormular({
         </p>
       )}
 
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        Gespeichert wird zunächst ein Entwurf, den nur du siehst. Abgeschickt wird er danach mit „Zur Freigabe einreichen“.
+      </p>
       <div className="flex gap-3">
         <button type="submit" disabled={laeuft} className={knopf}>
-          {laeuft ? "Speichert …" : "Speichern"}
+          {laeuft ? "Speichert …" : "Als Entwurf speichern"}
         </button>
         <Link href={werte ? `/anforderungen/${werte.id}` : "/"} className={knopfSekundaer}>
           Abbrechen

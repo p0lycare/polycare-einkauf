@@ -14,6 +14,7 @@ function text(formData: FormData, feld: string): string {
 
 function ergebnis(error: { message: string } | null, fehlertext: string): Status {
   revalidatePath("/", "layout");
+  if (error?.message.includes("Admin bleiben")) return { fehler: "Mindestens eine Person muss Admin bleiben." };
   return error ? { fehler: fehlertext } : { gespeichert: true };
 }
 

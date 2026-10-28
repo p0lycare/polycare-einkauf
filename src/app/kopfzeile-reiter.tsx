@@ -25,7 +25,7 @@ export function KopfzeileReiter({ reiter }: { reiter: Reiter[] }) {
           }`}
         >
           {r.text}
-          {!!r.zaehler && <span className="rounded-full bg-marke px-1.5 text-xs leading-5 font-medium text-white">{r.zaehler}</span>}
+          {!!r.zaehler && <span className="rounded-full bg-marke-dunkel px-1.5 text-xs leading-5 font-medium text-white dark:text-neutral-950">{r.zaehler}</span>}
         </Link>
       ))}
     </nav>

@@ -14,13 +14,14 @@ export type ListenEintrag = {
   ausserplanmaessig: boolean;
   created_at: string;
   eingereicht_am: string | null;
+  team_id: string;
   team: { name: string } | null;
   ersteller?: { name: string } | null;
 };
 
 /** Spalten für .select(), passend zu ListenEintrag */
 export const LISTEN_SPALTEN =
-  "id, nr, titel, lieferant, betrag_cent, status, ausserplanmaessig, created_at, eingereicht_am, team(name), ersteller:profile!anforderung_ersteller_id_fkey(name)";
+  "id, nr, titel, lieferant, betrag_cent, status, ausserplanmaessig, created_at, eingereicht_am, team_id, team(name), ersteller:profile!anforderung_ersteller_id_fkey(name)";
 
 export function AnforderungsListe({ eintraege, leerText }: { eintraege: ListenEintrag[]; leerText: string }) {
   if (!eintraege.length) return <p className={leer}>{leerText}</p>;

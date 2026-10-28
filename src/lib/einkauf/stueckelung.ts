@@ -48,17 +48,29 @@ export function stueckelungZu(
   const lieferant = normalisiereLieferant(a.lieferant);
   if (!lieferant || a.betrag_cent > grenzeCent) return null;
 
-  const treffer = andere.filter(
+  const fenster = STUECKELUNG_FENSTER_TAGE * TAG_MS;
+  const kandidaten = andere.filter(
     (k) =>
       k.id !== a.id &&
       k.team_id === a.team_id &&
       k.betrag_cent <= grenzeCent &&
       normalisiereLieferant(k.lieferant) === lieferant &&
-      Math.abs(zeitpunkt(k) - zeitpunkt(a)) <= STUECKELUNG_FENSTER_TAGE * TAG_MS,
+      Math.abs(zeitpunkt(k) - zeitpunkt(a)) <= fenster,
   );
-  const summeCent = treffer.reduce((s, k) => s + k.betrag_cent, a.betrag_cent);
+
+  // Wie in der Übersicht: alle Anforderungen müssen in EIN 30-Tage-Fenster passen (das auch `a` enthält);
+  // genommen wird das Fenster mit der höchsten Summe
+  const alle = [a, ...kandidaten].sort((x, y) => zeitpunkt(x) - zeitpunkt(y));
+  let treffer: StueckelungsKandidat[] = [];
+  let summeCent = 0;
+  for (const start of alle) {
+    if (zeitpunkt(start) > zeitpunkt(a) || zeitpunkt(a) - zeitpunkt(start) > fenster) continue;
+    const imFenster = alle.filter((k) => zeitpunkt(k) >= zeitpunkt(start) && zeitpunkt(k) - zeitpunkt(start) <= fenster);
+    const summe = imFenster.reduce((s, k) => s + k.betrag_cent, 0);
+    if (summe > summeCent) [treffer, summeCent] = [imFenster.filter((k) => k.id !== a.id), summe];
+  }
   if (!treffer.length || summeCent <= grenzeCent) return null;
-  return { treffer: treffer.sort((x, y) => zeitpunkt(x) - zeitpunkt(y)), summeCent };
+  return { treffer, summeCent };
 }
 
 /**

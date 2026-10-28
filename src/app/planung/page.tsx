@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ladeIch, plant } from "@/lib/einkauf/ich";
 import { formatDatum, formatEuro } from "@/lib/format";
 import { karte } from "@/lib/stil";
-import { KeyResultZeile, PeriodeKopieren, PeriodeZeile, PostenZeile } from "./formulare";
+import { KeyResultKopf, KeyResultZeile, PeriodeKopieren, PeriodenKopf, PeriodeZeile, PostenKopf, PostenZeile, STATUS_TEXT } from "./formulare";
 
 export default async function Planung({ searchParams }: { searchParams: Promise<{ periode?: string }> }) {
   const { periode: gewuenscht } = await searchParams;
@@ -50,6 +50,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
         </p>
         {finanzen ? (
           <div className="divide-y divide-neutral-100 dark:divide-neutral-900">
+            <PeriodenKopf />
             {(perioden ?? []).map((p) => (
               <PeriodeZeile key={p.id} periode={p} />
             ))}
@@ -59,7 +60,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
           <ul className="mt-2 text-sm">
             {(perioden ?? []).map((p) => (
               <li key={p.id}>
-                {p.name}: {formatDatum(p.beginn)} – {formatDatum(p.ende)} ({p.status})
+                {p.name}: {formatDatum(p.beginn)} – {formatDatum(p.ende)} ({STATUS_TEXT[p.status]})
               </li>
             ))}
           </ul>
@@ -97,6 +98,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
             <h2 className="font-medium">Key Results {periode.name}</h2>
             {finanzen ? (
               <div className="divide-y divide-neutral-100 dark:divide-neutral-900">
+                <KeyResultKopf />
                 {(keyResults ?? []).map((k) => (
                   <KeyResultZeile key={k.id} kr={k} periodeId={periode.id} teams={teams ?? []} />
                 ))}
@@ -126,6 +128,7 @@ export default async function Planung({ searchParams }: { searchParams: Promise<
                 </div>
                 {bearbeitbar ? (
                   <div className="divide-y divide-neutral-100 dark:divide-neutral-900">
+                    <PostenKopf />
                     {teamPosten.map((p) => (
                       <PostenZeile key={p.id} posten={p} periodeId={periode.id} teamId={t.id} keyResults={krs} />
                     ))}
