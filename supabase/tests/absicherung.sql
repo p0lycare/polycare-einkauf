@@ -13,6 +13,8 @@ insert into auth.users (id, email) values (gen_random_uuid(), 'neu@test');
 select test.pruefe(not (select ist_admin from profile where email = 'neu@test'), 'neue Person wird nicht Admin');
 
 -- Interne Funktionen: anon darf nichts protokollieren, niemand rechnet Budgets fremder Posten aus
+grant usage on schema test to anon;
+grant execute on function test.erwarte_fehler(text, text) to anon;
 set role anon;
 select test.erwarte_fehler($$select mail_protokollieren(null, 'x', '{}', 'x', 'gesendet', '')$$, 'permission denied');
 set role authenticated;
