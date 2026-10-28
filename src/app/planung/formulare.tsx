@@ -5,6 +5,7 @@ import { ohneZuruecksetzen } from "@/lib/formular";
 import { centAlsEingabe } from "@/lib/geld";
 import { formatEuro } from "@/lib/format";
 import { feldKlein, knopfKlein } from "@/lib/stil";
+import type { Vergleich } from "@/lib/okr/okr-set";
 import {
   keyResultLoeschen,
   keyResultSpeichern,
@@ -243,6 +244,78 @@ export function PeriodeKopieren({ ziel, vorperioden }: { ziel: Auswahl; vorperio
   );
 }
 
+type VorschauZeile = {
+  art: "neu" | "geändert" | "entfällt";
+  kuerzel: string;
+  titel: string;
+  team: string | null;
+  cent: number | null;
+  detail?: string;
+};
+
+const ART_STIL: Record<VorschauZeile["art"], string> = {
+  neu: "bg-marke-hell text-marke-dunkel",
+  geändert: "bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100",
+  entfällt: "bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+};
+
+/** Änderungen gegliedert nach Teams, eine Zeile je Key Result */
+function OkrVorschauNachTeams({ v }: { v: Vergleich }) {
+  const zeilen: VorschauZeile[] = [
+    ...v.neu.map((k) => ({ art: "neu" as const, kuerzel: k.kuerzel ?? "?", titel: k.titel, team: k.team, cent: k.budget_vorschlag_cent })),
+    ...v.geaendert.map((g) => ({ art: "geändert" as const, kuerzel: g.kuerzel, titel: g.titel, team: g.team, cent: null, detail: g.was.join(", ") })),
+    ...v.entfallen.map((k) => ({
+      art: "entfällt" as const,
+      kuerzel: k.kuerzel,
+      titel: k.titel,
+      team: k.team,
+      cent: null,
+      detail: "bleibt mit seinen Ausgaben erhalten und wird markiert",
+    })),
+  ];
+  const teams = [...new Set(zeilen.map((z) => z.team ?? "ohne Team"))].sort((a, b) => a.localeCompare(b, "de"));
+
+  return (
+    <div className="flex flex-col gap-4">
+      {teams.map((team) => {
+        const eigene = zeilen
+          .filter((z) => (z.team ?? "ohne Team") === team)
+          .sort((a, b) => a.kuerzel.localeCompare(b.kuerzel, "de", { numeric: true }));
+        const budget = eigene.reduce((s, z) => s + (z.cent ?? 0), 0);
+        return (
+          <section key={team}>
+            <h3 className="font-medium">
+              {team}{" "}
+              <span className="font-normal text-neutral-500">
+                · {eigene.length} {eigene.length === 1 ? "Key Result" : "Key Results"}
+                {budget > 0 && ` · Budgetvorschlag ${formatEuro(budget)}`}
+              </span>
+            </h3>
+            <ul className="mt-1 divide-y divide-neutral-200 dark:divide-neutral-800">
+              {eigene.map((z) => (
+                <li key={`${z.art}-${z.kuerzel}`} className="grid grid-cols-[4.5rem_1fr_auto] items-start gap-2 py-1.5">
+                  <span className="font-medium">{z.kuerzel}</span>
+                  <span className="min-w-0">
+                    <span className="line-clamp-2" title={z.titel}>
+                      {z.titel}
+                    </span>
+                    {z.detail && <span className="block text-xs text-neutral-500">{z.detail}</span>}
+                  </span>
+                  <span className="flex flex-col items-end gap-0.5">
+                    <span className={`rounded px-1.5 text-xs ${ART_STIL[z.art]}`}>{z.art}</span>
+                    {z.cent ? <span className="tabular-nums text-xs">{formatEuro(z.cent)}</span> : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+      {v.unveraendert > 0 && <p className="text-neutral-500">{v.unveraendert} Key Results unverändert.</p>}
+    </div>
+  );
+}
+
 /** Vorschau und Übernahme eines eingefrorenen OKR-Sets; Finanzen bestätigt, was übernommen wird */
 export function OkrUebernahme({ vorschlag }: { vorschlag: string }) {
   const [vorschau, laden, laedt] = useActionState(okrVorschau, {});
@@ -275,27 +348,7 @@ export function OkrUebernahme({ vorschlag }: { vorschlag: string }) {
           {bereitsAktuell ? (
             <p>Alles ist auf dem Stand des OKR-Dashboards.</p>
           ) : (
-            <ul className="flex flex-col gap-2">
-              {v.neu.length > 0 && (
-                <li>
-                  <span className="font-medium">Neu ({v.neu.length}):</span>{" "}
-                  {v.neu.map((k) => `${k.kuerzel ?? "?"} ${k.titel}${k.team ? ` (${k.team})` : ""}${k.budget_vorschlag_cent ? ` · ${formatEuro(k.budget_vorschlag_cent)}` : ""}`).join("; ")}
-                </li>
-              )}
-              {v.geaendert.length > 0 && (
-                <li>
-                  <span className="font-medium">Geändert ({v.geaendert.length}):</span>{" "}
-                  {v.geaendert.map((g) => `${g.kuerzel}: ${g.was.join(", ")}`).join("; ")}
-                </li>
-              )}
-              {v.entfallen.length > 0 && (
-                <li>
-                  <span className="font-medium">Nicht mehr im OKR-Set ({v.entfallen.length}):</span>{" "}
-                  {v.entfallen.map((k) => `${k.kuerzel} ${k.titel}`).join("; ")} – bleiben mit ihren Ausgaben erhalten und werden markiert.
-                </li>
-              )}
-              {v.unveraendert > 0 && <li className="text-neutral-500">{v.unveraendert} unverändert</li>}
-            </ul>
+            <OkrVorschauNachTeams v={v} />
           )}
           {v.unbekannteTeams.length > 0 && (
             <p className="text-amber-800 dark:text-amber-300">

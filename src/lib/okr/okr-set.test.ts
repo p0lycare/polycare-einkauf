@@ -57,10 +57,10 @@ describe("vergleiche", () => {
     expect(v.neu).toEqual([]);
     expect(v.unveraendert).toBe(1);
     expect(v.geaendert).toEqual([
-      { kuerzel: "KR 1.2", titel: "Baustelle betreut", was: ["Titel", "Budgetvorschlag"] },
-      { kuerzel: "KR 2.1", titel: "Neue Messe", was: ["wird mit dem OKR-Dashboard verknüpft"] },
+      { kuerzel: "KR 1.2", titel: "Baustelle betreut", team: "bausysteme", was: ["Titel", "Budgetvorschlag"] },
+      { kuerzel: "KR 2.1", titel: "Neue Messe", team: "Vertrieb", was: ["wird mit dem OKR-Dashboard verknüpft"] },
     ]);
-    expect(v.entfallen).toEqual([{ kuerzel: "KR 3.1", titel: "Gestrichen" }]);
+    expect(v.entfallen).toEqual([{ kuerzel: "KR 3.1", titel: "Gestrichen", team: "Material" }]);
     expect(v.unbekannteTeams).toEqual([]);
   });
 });
