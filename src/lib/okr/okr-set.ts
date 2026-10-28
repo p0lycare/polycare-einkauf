@@ -40,7 +40,7 @@ export type Bestand = {
   keyResults: { okr_id: string | null; kuerzel: string; titel: string; team: string | null; okr_budget_vorschlag_cent: number | null; okr_entfallen: boolean }[];
 };
 
-export type Aenderung = { kuerzel: string; titel: string; was: string[] };
+export type Aenderung = { kuerzel: string; titel: string; team: string | null; was: string[] };
 
 export type Vergleich = {
   zyklus: string;
@@ -48,7 +48,7 @@ export type Vergleich = {
   bisherigeVersion: number | null;
   neu: OkrKeyResult[];
   geaendert: Aenderung[];
-  entfallen: { kuerzel: string; titel: string }[];
+  entfallen: { kuerzel: string; titel: string; team: string | null }[];
   unveraendert: number;
   unbekannteTeams: string[];
   /** Budget an Top-Level-KRs – wird nicht übernommen, nur zur Info */
@@ -81,14 +81,14 @@ export function vergleiche(set: OkrSet, bestand: Bestand, teamNamen: string[]): 
     if (alt.okr_id && (alt.okr_budget_vorschlag_cent ?? null) !== (kr.budget_vorschlag_cent ?? null)) was.push("Budgetvorschlag");
     if (alt.okr_entfallen) was.push("wieder im OKR-Set");
     if (!alt.okr_id) was.push("wird mit dem OKR-Dashboard verknüpft");
-    if (was.length) geaendert.push({ kuerzel: anzeigeKuerzel(kr), titel: kr.titel, was });
+    if (was.length) geaendert.push({ kuerzel: anzeigeKuerzel(kr), titel: kr.titel, team: kr.team, was });
     else unveraendert++;
   }
 
   const ids = new Set(teamKrs.map((k) => k.id));
   const entfallen = bestand.keyResults
     .filter((k) => k.okr_id && !k.okr_entfallen && !ids.has(k.okr_id))
-    .map((k) => ({ kuerzel: k.kuerzel, titel: k.titel }));
+    .map((k) => ({ kuerzel: k.kuerzel, titel: k.titel, team: k.team }));
 
   const unbekannteTeams = [...new Set(teamKrs.map((k) => k.team).filter((t): t is string => !!t && !teams.has(t.toLowerCase())))];
 
