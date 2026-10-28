@@ -258,10 +258,13 @@ select test.pruefe(test.empfaenger('GF-Wunsch', 'zur_freigabe') = '', 'GF-Wunsch
 
 select test.als('prod@test');
 select test.pruefe(test.empfaenger('Pipetten', 'bestellt') = '', 'anderes Team bekommt keine Empfänger');
-select mail_protokollieren(null, 'test', array['x@test'], 'Betreff', 'gesendet', '');
-select test.pruefe((select count(*) = 0 from mail_protokoll), 'Protokoll nur für Admins lesbar');
+select test.erwarte_fehler($$select mail_protokollieren(null, 'test', array['x@test'], 'Betreff', 'gesendet', '')$$, 'Keine Berechtigung');
+select test.erwarte_fehler($$select mail_protokollieren(test.anforderung('Pipetten'), 'x', '{}', 'gefälscht', 'gesendet', '')$$, 'Keine Berechtigung');
 select test.als('admin@test');
+select mail_protokollieren(null, 'test', array['x@test'], 'Betreff', 'gesendet', '');
 select test.pruefe((select count(*) = 1 from mail_protokoll), 'Admin liest Protokoll');
+select test.als('prod@test');
+select test.pruefe((select count(*) = 0 from mail_protokoll), 'Protokoll nur für Admins lesbar');
 
 reset role;
 \echo 'Alle Datenbanktests bestanden.'

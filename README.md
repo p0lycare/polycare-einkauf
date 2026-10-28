@@ -33,6 +33,7 @@ dem Microsoft-Firmenkonto; Rollen werden je App gepflegt.
 | Übersicht für GF und Finanzen | ✅ `/uebersicht`: Teams, offene Freigaben, Stückelung, außerplanmäßig |
 | Auswertung je Key Result | ✅ `/uebersicht/key-results`, CSV-Export für Finanzen |
 | Hinweis auf gestückelte Anforderungen | ✅ `src/lib/einkauf/stueckelung.ts`, an der Anforderung und in der Übersicht |
+| Vom OKR zur Bestellung (Zusammenspiel mit dem OKR-Dashboard) | ✅ `/hilfe/okr` – Umsetzung der Schnittstelle offen |
 | Einführung je Rolle | ✅ `/hilfe`, Texte in `src/lib/hilfe/einfuehrung.ts` |
 | Wareneingang, Rechnung → „ausgegeben“ | ⏳ |
 | Agicap über MCP | ⏳ |

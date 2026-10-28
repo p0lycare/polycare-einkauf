@@ -4,8 +4,19 @@ export function formatEuro(cent: number): string {
   return euro.format(cent / 100);
 }
 
-/** "2026-10-23" oder "2026-10-23T07:30" → "23.10.2026" */
+const DATUM_BERLIN = new Intl.DateTimeFormat("de-DE", {
+  timeZone: "Europe/Berlin",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+
+/**
+ * "2026-10-23" → "23.10.2026". Zeitstempel mit Zeitzone (aus der Datenbank, in UTC) werden in deutscher
+ * Zeit gezeigt – sonst rutscht eine Bestellung um 1:30 Uhr auf den Vortag.
+ */
 export function formatDatum(wert: string): string {
+  if (/[zZ]|[+-]\d{2}:?\d{2}$/.test(wert.slice(10))) return DATUM_BERLIN.format(new Date(wert));
   const [j, m, t] = wert.slice(0, 10).split("-");
   return `${t}.${m}.${j}`;
 }

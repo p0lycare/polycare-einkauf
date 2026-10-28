@@ -5,7 +5,7 @@ const FARBE: Record<AnforderungStatus, string> = {
   bei_teamleitung: "bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
   bei_gf: "bg-violet-50 text-violet-800 dark:bg-violet-950 dark:text-violet-200",
   freigegeben: "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200",
-  bestellt: "bg-marke text-white",
+  bestellt: "bg-marke-hell text-marke-dunkel",
   abgelehnt: "bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200",
 };
 

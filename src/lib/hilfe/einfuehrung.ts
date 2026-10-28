@@ -30,7 +30,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
       schritte: [
         {
           titel: "Anmelden",
-          text: "Mit deinem Polycare-Microsoft-Konto. Beim ersten Mal ordnet dich die Verwaltung deinem Team zu – vorher kannst du noch nichts anfordern.",
+          text: "Mit deinem Polycare-Microsoft-Konto. Beim ersten Mal ordnet dich die Verwaltung deinem Team zu. Bis dahin musst du im Formular selbst wählen, für welches Team du anforderst.",
         },
         {
           titel: "Neue Anforderung anlegen",
@@ -46,7 +46,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Rückmeldung abwarten",
-          text: "Du bekommst eine Mail, wenn freigegeben, abgelehnt oder bestellt wurde. Bei einer Ablehnung steht der Grund dabei: anpassen und neu einreichen. Solange noch niemand entschieden hat, geht „Zurückziehen und bearbeiten“.",
+          text: "Du bekommst eine Mail, wenn freigegeben, abgelehnt oder bestellt wurde. Bei einer Ablehnung steht der Grund dabei: anpassen und neu einreichen. Solange die Anforderung in der Freigabe ist, geht „Zurückziehen und bearbeiten“ – eine schon erteilte Freigabe der Teamleitung verfällt dann.",
         },
         {
           titel: "Budget im Blick",
@@ -68,7 +68,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
         },
         {
           titel: "Wann die Geschäftsführung dazukommt",
-          text: `Bis ${grenze} brutto reicht deine Freigabe, danach geht die Anforderung direkt an den Einkauf. Darüber und bei außerplanmäßigen Anforderungen entscheidet nach dir die Geschäftsführung. Deine eigenen Anforderungen gibt immer die Geschäftsführung frei.`,
+          text: `Bis einschließlich ${grenze} brutto genügt deine Freigabe – die Anforderung geht dann direkt an den Einkauf. Darüber und bei außerplanmäßigen Anforderungen entscheidet nach dir die Geschäftsführung. Deine eigenen Anforderungen gibt immer die Geschäftsführung frei.`,
         },
         {
           titel: "Budget planen",
@@ -82,7 +82,7 @@ export function einfuehrung(grenze: string): Record<Rolle, Einfuehrung> {
       schritte: [
         {
           titel: "Freigaben",
-          text: `Nach der Teamleitung landen bei dir Anforderungen über ${grenze} brutto, außerplanmäßige und die Anforderungen der Teamleitungen selbst. Du bekommst eine Mail, offen ist alles unter „Freigaben“.`,
+          text: `Nach der Teamleitung landen bei dir Anforderungen über ${grenze} brutto, außerplanmäßige und die Anforderungen der Teamleitungen selbst. Du bekommst eine Mail; unter „Freigaben“ steht oben, was auf dich wartet. Darunter siehst du, was noch bei einer Teamleitung liegt – das kannst du bei Bedarf vertreten.`,
         },
         {
           titel: "Entscheiden",

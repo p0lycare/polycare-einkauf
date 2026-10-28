@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ladeIch, sichtAufAlleTeams } from "@/lib/einkauf/ich";
+import { gibtFrei, ladeIch, sichtAufAlleTeams } from "@/lib/einkauf/ich";
 import { formatNr } from "@/lib/einkauf/anforderung";
 import { STUECKELUNG_FENSTER_TAGE, stueckelungZu, type StueckelungsKandidat } from "@/lib/einkauf/stueckelung";
 import { formatDatum, formatEuro } from "@/lib/format";
 import { knopfSekundaer } from "@/lib/stil";
-import { anforderungLoeschen } from "../actions";
+import { LoeschenKnopf } from "./loeschen-knopf";
+import { ERLEDIGT, istErledigt } from "./workflow/erledigt";
 import { AusserplanBadge, StatusBadge } from "../status-badge";
 import { Verlauf } from "./workflow/verlauf";
 import { WorkflowPanel, type WorkflowRechte } from "./workflow/workflow-panel";
@@ -25,10 +26,10 @@ export default async function AnforderungSeite({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ angebot?: string }>;
+  searchParams: Promise<{ angebot?: string; erledigt?: string }>;
 }) {
   const { id } = await params;
-  const { angebot } = await searchParams;
+  const { angebot, erledigt } = await searchParams;
   const supabase = await createClient();
   const [ich, { data: a }, { data: dateien }] = await Promise.all([
     ladeIch(supabase),
@@ -82,19 +83,51 @@ export default async function AnforderungSeite({
   const gfGrenzeCent = einstellungen?.gf_grenze_cent ?? 100000;
   const stueckelung = pruefeStueckelung ? stueckelungZu(a, aehnliche ?? [], gfGrenzeCent) : null;
 
+  // Die GF darf auch Anforderungen freigeben, die noch bei der Teamleitung liegen – das soll man merken
+  const vertritt = rechte.freigeben && a.status === "bei_teamleitung" && !ich.leitet.includes(a.team_id);
   const panelTitel = rechte.freigeben
     ? a.status === "bei_gf"
       ? "Freigabe Geschäftsführung"
-      : "Freigabe Teamleitung"
+      : vertritt
+        ? "Freigabe anstelle der Teamleitung"
+        : "Freigabe Teamleitung"
     : rechte.bestellen
       ? "Bestellung"
-      : "Nächster Schritt";
+      : a.status === "entwurf"
+        ? "Noch nicht eingereicht"
+        : "Nächster Schritt";
+  const panelHinweis = vertritt
+    ? "Die Anforderung liegt noch bei der Teamleitung. Gibst du sie frei, wird die Teamleitung übersprungen."
+    : rechte.einreichen
+      ? "Erst mit „Zur Freigabe einreichen“ geht die Anforderung los – vorher sieht sie niemand außer dir."
+      : undefined;
+  // Zurückziehen nach erteilter Teamleitungs-Freigabe verwirft diese – vorher nachfragen
+  const zurueckziehenFrage = a.teamleitung_von
+    ? `Die Freigabe ${a.tl?.name ? `von ${a.tl.name} ` : ""}verfällt, du musst danach neu einreichen. Trotzdem zurückziehen?`
+    : undefined;
+
+  // Zurück dorthin, woher man in der Regel kommt
+  const zurueck = eigene
+    ? { href: "/", text: "Meine Anforderungen" }
+    : ich.ist_einkauf && (a.status === "freigegeben" || a.status === "bestellt")
+      ? { href: "/einkauf", text: "Einkauf" }
+      : gibtFrei(ich) && a.status !== "freigegeben" && a.status !== "bestellt"
+        ? { href: "/freigaben", text: "Freigaben" }
+        : sichtAufAlleTeams(ich)
+          ? { href: "/uebersicht", text: "Übersicht" }
+          : { href: "/", text: "Meine Anforderungen" };
+  const weiter =
+    erledigt === "freigegeben" || erledigt === "freigegeben_gf" || erledigt === "abgelehnt"
+      ? { href: "/freigaben", text: "Zur nächsten Freigabe →" }
+      : erledigt === "bestellt"
+        ? { href: "/einkauf", text: "Zurück zum Einkauf →" }
+        : null;
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-6 p-6 font-sans">
       <div>
-        <Link href="/" className="text-sm text-neutral-500 hover:underline">
-          ← Meine Anforderungen
+        <Link href={zurueck.href} className="text-sm text-neutral-500 hover:underline">
+          ← {zurueck.text}
         </Link>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -145,7 +178,18 @@ export default async function AnforderungSeite({
         </div>
       )}
 
-      <WorkflowPanel id={a.id} rechte={rechte} titel={panelTitel} />
+      {istErledigt(erledigt) && (
+        <p role="status" className="flex flex-wrap justify-between gap-2 rounded-md bg-marke-hell p-3 text-sm text-marke-dunkel">
+          <span>{ERLEDIGT[erledigt]}</span>
+          {weiter && (
+            <Link href={weiter.href} className="font-medium underline">
+              {weiter.text}
+            </Link>
+          )}
+        </p>
+      )}
+
+      <WorkflowPanel id={a.id} rechte={rechte} titel={panelTitel} hinweis={panelHinweis} zurueckziehenFrage={zurueckziehenFrage} />
 
       <dl className="divide-y divide-neutral-100 dark:divide-neutral-900">
         <Zeile label="Angefordert von">{a.ersteller?.name}</Zeile>
@@ -201,14 +245,7 @@ export default async function AnforderungSeite({
           <Link href={`/anforderungen/${a.id}/bearbeiten`} className={knopfSekundaer}>
             Bearbeiten
           </Link>
-          {a.status === "entwurf" && (
-            <form action={anforderungLoeschen}>
-              <input type="hidden" name="id" value={a.id} />
-              <button type="submit" className="px-2 py-2 text-sm text-red-700 hover:underline dark:text-red-400">
-                Löschen
-              </button>
-            </form>
-          )}
+          {a.status === "entwurf" && <LoeschenKnopf id={a.id} nr={formatNr(a.nr)} />}
         </div>
       )}
 

@@ -9,12 +9,15 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
   // Auch Freigebende sehen hier nur ihre eigenen Anforderungen; die Freigabeansicht kommt separat
-  const { data } = await supabase
-    .from("anforderung")
-    .select(LISTEN_SPALTEN)
-    .eq("ersteller_id", user!.id)
-    .order("created_at", { ascending: false })
-    .returns<ListenEintrag[]>();
+  const [{ data }, { data: profil }] = await Promise.all([
+    supabase
+      .from("anforderung")
+      .select(LISTEN_SPALTEN)
+      .eq("ersteller_id", user!.id)
+      .order("created_at", { ascending: false })
+      .returns<ListenEintrag[]>(),
+    supabase.from("profile").select("team_id").eq("id", user!.id).single(),
+  ]);
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-6 p-6 font-sans">
@@ -24,6 +27,12 @@ export default async function Home() {
           Neue Anforderung
         </Link>
       </div>
+      {profil && !profil.team_id && (
+        <p className="rounded-md bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          Du bist noch keinem Team zugeordnet. Bitte melde dich bei der Verwaltung – bis dahin wählst du beim Anfordern
+          selbst, für welches Team die Anforderung ist.
+        </p>
+      )}
       {!data?.length && (
         <p className="rounded-md bg-marke-hell p-4 text-sm text-marke-dunkel">
           Neu hier? Die{" "}

@@ -15,6 +15,7 @@ type Anf = {
   betrag_cent: number;
   status: AnforderungStatus;
   team: { name: string } | null;
+  budgetposten: { key_result_id: string | null } | null;
 };
 
 function Betrag({ cent, warnung, breit }: { cent: number; warnung?: boolean; breit?: boolean }) {
@@ -46,7 +47,7 @@ export default async function KeyResultAuswertung({ searchParams }: { searchPara
         supabase.from("budgetposten").select("key_result_id, geplant_cent").eq("periode_id", periode.id),
         supabase
           .from("anforderung")
-          .select("id, nr, titel, key_result_id, betrag_cent, status, team(name)")
+          .select("id, nr, titel, key_result_id, betrag_cent, status, team(name), budgetposten(key_result_id)")
           .eq("periode_id", periode.id)
           .in("status", ["bei_teamleitung", "bei_gf", "freigegeben", "bestellt"])
           .order("nr")
@@ -54,7 +55,10 @@ export default async function KeyResultAuswertung({ searchParams }: { searchPara
       ])
     : [{ data: [] }, { data: [] }, { data: [] }];
 
-  const zeilen = auswertungJeKeyResult(keyResults ?? [], posten ?? [], anforderungen ?? []);
+  // Ausgaben zählen beim Key Result ihres Budgetpostens – so passt die Auswertung zur Budget-Seite;
+  // nur ohne Posten (außerplanmäßig) gilt das an der Anforderung gewählte Key Result
+  const ausgaben = (anforderungen ?? []).map((a) => ({ ...a, key_result_id: a.budgetposten?.key_result_id ?? a.key_result_id }));
+  const zeilen = auswertungJeKeyResult(keyResults ?? [], posten ?? [], ausgaben);
   const teamName = new Map((teams ?? []).map((t) => [t.id, t.name]));
 
   return (
@@ -85,8 +89,8 @@ export default async function KeyResultAuswertung({ searchParams }: { searchPara
           </nav>
         )}
         <p className="mt-3 text-sm text-neutral-500">
-          Geplant = Summe der Budgetposten mit diesem Key Result. Ausgaben nach dem Key Result der Anforderung. Gebunden =
-          freigegeben oder bestellt. Alle Beträge brutto.
+          Geplant = Summe der Budgetposten mit diesem Key Result. Ausgaben zählen beim Key Result ihres Budgetpostens,
+          außerplanmäßige beim Key Result der Anforderung. Gebunden = freigegeben oder bestellt. Alle Beträge brutto.
         </p>
       </div>
 
@@ -107,7 +111,7 @@ export default async function KeyResultAuswertung({ searchParams }: { searchPara
             </thead>
             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-900">
               {zeilen.map((z) => {
-                const eigene = (anforderungen ?? []).filter((a) => a.key_result_id === (z.kr?.id ?? null));
+                const eigene = ausgaben.filter((a) => a.key_result_id === (z.kr?.id ?? null));
                 return (
                   <tr key={z.kr?.id ?? "ohne"} className="align-top">
                     <td className="py-2 pr-2">

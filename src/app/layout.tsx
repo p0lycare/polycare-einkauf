@@ -29,12 +29,17 @@ export default async function RootLayout({
   const supabase = await createClient();
   const ich = await ladeIch(supabase);
 
+  // Zähler nur für das, was wirklich wartet: bei der GF alles „bei_gf“, sonst die Teams, die ich leite
+  // (was die GF bei einer Teamleitung vertreten könnte, zählt nicht mit)
+  const wartetAufMich = ich?.leitet.length
+    ? `status.eq.bei_gf,and(status.eq.bei_teamleitung,team_id.in.(${ich.leitet.join(",")}))`
+    : "status.eq.bei_gf";
   const [{ count: freigaben }, { count: bestellen }] = await Promise.all([
     ich && gibtFrei(ich)
       ? supabase
           .from("anforderung")
           .select("id", { count: "exact", head: true })
-          .in("status", ["bei_teamleitung", "bei_gf"])
+          .or(wartetAufMich)
           .eq("darf_freigeben", true)
       : { count: 0 },
     ich?.ist_einkauf

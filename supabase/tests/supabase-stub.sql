@@ -14,7 +14,9 @@ create schema auth;
 create table auth.users (
   id uuid primary key,
   email text,
-  raw_user_meta_data jsonb not null default '{}'
+  raw_user_meta_data jsonb not null default '{}',
+  -- wie bei Supabase: Anmeldeart; Testpersonen kommen über Microsoft
+  raw_app_meta_data jsonb not null default '{"provider": "azure"}'
 );
 create function auth.uid() returns uuid
   language sql stable as $$

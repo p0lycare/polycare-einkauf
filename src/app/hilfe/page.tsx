@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ladeIch } from "@/lib/einkauf/ich";
@@ -47,10 +48,15 @@ export default async function Hilfe() {
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-6 p-6 font-sans">
       <div>
-        <h1 className="text-xl font-semibold">Einführung</h1>
+        <h1 className="text-xl font-semibold">Hilfe und Einführung</h1>
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
           Deine Rollen: {meine.map((r) => ROLLEN_NAME[r]).join(", ")}.
           {!ich.team_id && " Du bist noch keinem Team zugeordnet – bitte melde dich bei der Verwaltung."}
+        </p>
+        <p className="mt-2 text-sm">
+          <Link href="/hilfe/okr" className="text-marke-dunkel underline dark:text-white">
+            Vom OKR zur Bestellung: wie OKR-Dashboard und Einkaufs-App zusammenarbeiten →
+          </Link>
         </p>
       </div>
 

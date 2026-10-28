@@ -15,8 +15,8 @@ type Zeile = {
   bestellt_am: string | null;
   bestellnummer: string | null;
   team: { name: string } | null;
-  key_result: { kuerzel: string; titel: string } | null;
-  budgetposten: { name: string } | null;
+  key_result_id: string | null;
+  budgetposten: { name: string; key_result_id: string | null } | null;
 };
 
 /** Alle eingereichten Anforderungen einer Periode mit Key Result, für Finanzen als CSV */
@@ -34,17 +34,20 @@ export async function GET(request: NextRequest) {
   const { data } = await supabase
     .from("anforderung")
     .select(
-      "nr, titel, lieferant, betrag_cent, status, eingereicht_am, bestellt_am, bestellnummer, team(name), key_result(kuerzel, titel), budgetposten(name)",
+      "nr, titel, lieferant, betrag_cent, status, eingereicht_am, bestellt_am, bestellnummer, key_result_id, team(name), budgetposten(name, key_result_id)",
     )
     .eq("periode_id", periode.id)
     .in("status", ["bei_teamleitung", "bei_gf", "freigegeben", "bestellt"])
     .order("nr")
     .returns<Zeile[]>();
 
+  // Wie auf der Seite: Key Result des Budgetpostens, sonst das der Anforderung
+  const { data: krs } = await supabase.from("key_result").select("id, kuerzel, titel").eq("periode_id", periode.id);
+  const krName = new Map((krs ?? []).map((k) => [k.id, `${k.kuerzel} ${k.titel}`]));
   const csv = alsCsv(
     (data ?? [])
       .map((a) => ({
-        key_result: a.key_result ? `${a.key_result.kuerzel} ${a.key_result.titel}` : "ohne Key Result",
+        key_result: krName.get(a.budgetposten?.key_result_id ?? a.key_result_id ?? "") ?? "ohne Key Result",
         team: a.team?.name ?? "",
         nr: formatNr(a.nr),
         titel: a.titel,

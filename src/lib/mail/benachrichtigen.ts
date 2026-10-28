@@ -9,6 +9,8 @@ import { alsMail, type Anlass } from "./vorlagen";
 
 export async function appUrl(): Promise<string> {
   if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, "");
+  // Links in Mails nie aus Request-Headern bauen, die ein Client setzen kann – nur lokal als Notlösung
+  if (process.env.VERCEL_ENV === "production") throw new Error("APP_URL ist nicht gesetzt");
   const h = await headers();
   return `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`;
 }
