@@ -94,7 +94,8 @@ schreiben** und **erwartete Zahlung anlegen** sehen wir erst mit Schreibrechten.
 ### Kategorien
 
 Abflüsse, gekürzt auf den für uns wichtigen Teil (aktueller Baum ab 2025; ein alter Baum
-„vor 31.12.2024“ ist noch vorhanden, aber leer):
+„vor 31.12.2024“ mit englischen Kategorien wie „R&D“ und „Production“ ist noch vorhanden, wird aber nicht mehr
+bebucht):
 
 ```
 Operativer Cashflow
@@ -198,7 +199,7 @@ Agicap nicht eingerichtet ist.
 | gebunden (freigegeben + bestellt) | `expected`, sobald wir erwartete Zahlungen schreiben | Agicap rechnet dann selbst `remaining` = Budget − (bezahlt + erwartet). Das entspricht unserem „verfügbar“. |
 | ausgegeben (noch nicht gebaut) | `realized` je Kategorie | nur als Summe je Kategorie, nicht je Anforderung |
 | außerplanmäßig (ohne Posten) | – | braucht eine Ersatzkategorie je Team, sonst „Zu kategorisieren“ |
-| Beträge brutto in Cent | Euro mit Nachkommastellen | Bankbeträge sind brutto. Weil keine MwSt.-Automatik aktiv ist, sind auch die Budgets wie eingegeben, also brutto (bitte bestätigen, siehe Fragen). |
+| Beträge brutto in Cent | Euro mit Nachkommastellen | **Alles brutto** (von der GF bestätigt): Budgets in Agicap, Budgetvorschläge im OKR-Set und alle Beträge in der Einkaufs-App. Bankbeträge sind ohnehin brutto. |
 
 ### Kann Agicap „ausgegeben“ belegen?
 
@@ -249,8 +250,9 @@ Datum, die Agicap-Hilfe beschreibt das manuelle Anlegen und den Import. Dafür b
 
 ## Offene Fragen an Finanzen
 
-1. Sind die Budgets in Agicap **brutto** gepflegt? Die MwSt.-Automatik scheint aus zu sein, und
-   die Kategorien haben fast keinen MwSt.-Satz.
+1. ~~Sind die Budgets in Agicap **brutto** gepflegt?~~ **Geklärt: Alle Zahlen sind Bruttozahlen** –
+   in Agicap, im OKR-Set (Budgetvorschläge der Team-KRs, siehe Miro-Vorlage „Budget eintragen – für
+   Team Leads“) und in der Einkaufs-App.
 2. Passt die Zuordnung Team → Oberkategorie (Material-, Bausystem-, Produktionsentwicklung)? Wohin
    gehören Einkäufe für Verwaltung, Software oder Projekte wie SEMBLA?
 3. Soll die App erwartete Zahlungen schreiben dürfen, und in welches Szenario (Hauptszenario oder
